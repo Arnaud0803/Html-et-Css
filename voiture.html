@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catalogue Complet Marques, Modèles, Moteurs et Spécificités</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Sélection du véhicule, du moteur et spécificités</h1>
+
+    <form id="formulaire-selection">
+        <dl class="cascade">
+            <dt class="niveau-1">
+                <label for="marque">Marque :</label>
+                <select id="marque" name="marque">
+                    <option value="">-- Choisir une marque --</option>
+                </select>
+            </dt>
+
+            <dd class="niveau-2">
+                <label for="modele">Modèle :</label>
+                <select id="modele" name="modele" disabled>
+                    <option value="">-- Choisir un modèle --</option>
+                </select>
+            </dd>
+
+            <dd class="niveau-3">
+                <label for="moteur">Type de moteur :</label>
+                <select id="moteur" name="moteur" disabled>
+                    <option value="">-- Choisir un moteur --</option>
+                </select>
+            </dd>
+
+            <dd class="niveau-4">
+                Description :
+                <pre id="res-description" class="texte-spec">—</pre>
+            </dd>
+        </dl>
+
+        <button type="reset" id="resetBtn">Réinitialiser</button>
+    </form>
+
+    <script>
+        const catalogueVehicules = {
+            "Alfa Romeo": {
+                "Junior": {
+                    "Ibrida 136 ch e-DCT6": "Description : SUV urbain sportif compact.\nType de moteur : 3 cylindres 1.2 turbo + hybridation 48V\nPuissance : 136 ch | Couple : 230 Nm\nBoîte : Automatique e-DCT6 | Coffre : 415 L",
+                    "Elettrica 156 ch (54 kWh)": "Description : SUV urbain 100 % électrique.\nType de moteur : Électrique synchrone (batterie 54 kWh)\nPuissance : 156 ch | Couple : 260 Nm\nAutonomie WLTP : jusqu'à 410 km | Coffre : 400 L",
+                    "Elettrica Veloce 280 ch": "Description : SUV urbain électrique haute performance.\nType de moteur : Électrique avant avec différentiel Torsen\nPuissance : 280 ch | Couple : 345 Nm\n0 à 100 km/h : 5,9 s | Châssis sport rabaissé"
+                },
+                "Tonale": {
+                    "Hybrid 160 ch TCT7": "Description : SUV compact sportif italien.\nType de moteur : 4 cylindres turbo essence 1.5 L à géométrie variable + 48V\nPuissance : 160 ch | Couple : 240 Nm\nBoîte : Automatique TCT7 | Coffre : 500 L",
+                    "Diesel 1.6 JTDm 130 ch TCT6": "Description : SUV compact routier économique.\nType de moteur : 4 cylindres turbo diesel 1.6 L\nPuissance : 130 ch | Couple : 320 Nm\nBoîte : Automatique double embrayage 6 rapports",
+                    "Plug-In Hybrid Q4 280 ch": "Description : SUV compact hybride rechargeable 4 roues motrices.\nType de moteur : 4 cylindres 1.3 turbo (avant) + moteur électrique (arrière)\nPuissance cumulée : 280 ch | Transmission : Intégrale Q4 | Coffre : 385 L"
+                },
+                "Giulia": {
+                    "2.0 Turbo 280 ch Q4": "Description : Berline sportive propulsion ou intégrale.\nType de moteur : 4 cylindres turbo essence 2.0 L\nPuissance : 280 ch | Couple : 400 Nm\nBoîte : Automatique ZF 8 rapports | 0 à 100 km/h : 5,2 s",
+                    "2.2 Diesel 210 ch Q4": "Description : Berline routière dynamique.\nType de moteur : 4 cylindres turbo diesel 2.2 L\nPuissance : 210 ch | Couple : 470 Nm\nBoîte : Automatique ZF 8 rapports | Coffre : 480 L",
+                    "Quadrifoglio V6 520 ch": "Description : Berline haute performance.\nType de moteur : V6 2.9 L biturbo\nPuissance : 520 ch | Couple : 600 Nm\nTransmission : Propulsion | 0 à 100 km/h : 3,9 s"
+                },
+                "Stelvio": {
+                    "2.2 Diesel 210 ch Q4": "Description : SUV familial au comportement sportif.\nType de moteur : 4 cylindres turbo diesel 2.2 L\nPuissance : 210 ch | Couple : 470 Nm\nTransmission : Intégrale Q4 | Boîte : ZF 8 rapports | Coffre : 525 L",
+                    "2.0 Turbo 280 ch Q4": "Description : SUV familial essence performant.\nType de moteur : 4 cylindres turbo essence 2.0 L\nPuissance : 280 ch | Couple : 400 Nm\n0 à 100 km/h : 5,7 s | Coffre : 525 L",
+                    "Quadrifoglio V6 520 ch Q4": "Description : SUV très haute performance.\nType de moteur : V6 2.9 L biturbo\nPuissance : 520 ch | Couple : 600 Nm\n0 à 100 km/h : 3,8 s | Vitesse max : 285 km/h"
+                }
+            },
+            "Audi": {
+                "A1 Sportback": {
+                    "25 TFSI 95 ch": "Description : Citadine premium 5 portes.\nType de moteur : 3 cylindres turbo essence 1.0 L\nPuissance : 95 ch | Couple : 175 Nm\nBoîte : Manuelle 5 rapports | Coffre : 335 L",
+                    "30 TFSI 116 ch S tronic": "Description : Citadine premium polyvalente.\nType de moteur : 3 cylindres turbo essence 1.0 L\nPuissance : 116 ch | Couple : 200 Nm\nBoîte : Automatique S tronic 7 | Coffre : 335 L"
+                },
+                "A3 Sportback / Berline": {
+                    "35 TFSI 150 ch S tronic": "Description : Berline compacte premium.\nType de moteur : 4 cylindres turbo essence 1.5 L + hybridation 48V\nPuissance : 150 ch | Couple : 250 Nm\nBoîte : Automatique S tronic 7 | Coffre : 380 L",
+                    "35 TDI 150 ch S tronic": "Description : Compacte routière sobre.\nType de moteur : 4 cylindres turbo diesel 2.0 L\nPuissance : 150 ch | Couple : 360 Nm\nBoîte : Automatique S tronic 7",
+                    "S3 Quattro 333 ch": "Description : Compacte sportive 4 roues motrices.\nType de moteur : 4 cylindres turbo essence 2.0 L TFSI\nPuissance : 333 ch | Couple : 420 Nm\nTransmission : Intégrale Quattro | 0 à 100 km/h : 4,7 s",
+                    "RS 3 Quattro 400 ch": "Description : Compacte ultra-sportive 5 cylindres.\nType de moteur : 5 cylindres en ligne 2.5 L TFSI\nPuissance : 400 ch | Couple : 500 Nm\n0 à 100 km/h : 3,8 s | Torque Splitter arrière"
+                },
+                "A4 / A5 Avant": {
+                    "2.0 TFSI 204 ch S tronic": "Description : Berline familiale ou break Avant.\nType de moteur : 4 cylindres turbo essence 2.0 L\nPuissance : 204 ch | Couple : 340 Nm\nBoîte : Automatique S tronic 7 | Coffre : 476 L",
+                    "2.0 TDI 204 ch Quattro": "Description : Grande routière diesel.\nType de moteur : 4 cylindres turbo diesel 2.0 L + hybridation 48V\nPuissance : 204 ch | Couple : 400 Nm\nTransmission : Intégrale Quattro",
+                    "S5 V6 TFSI 367 ch Quattro": "Description : Berline ou break sportif.\nType de moteur : V6 3.0 L turbo + MHEV plus\nPuissance : 367 ch | Couple : 550 Nm\n0 à 100 km/h : 4,5 s"
+                },
+                "A6 / A6 Avant": {
+                    "40 TDI 204 ch S tronic": "Description : Grande berline ou break routier.\nType de moteur : 4 cylindres turbo diesel 2.0 L + hybridation 12V\nPuissance : 204 ch | Couple : 400 Nm\nCoffre : 530 L (565 L Avant)",
+                    "RS 6 Avant Performance 630 ch": "Description : Break de chasse ultra-performant.\nType de moteur : V8 4.0 L biturbo + 48V\nPuissance : 630 ch | Couple : 850 Nm\nTransmission : Quattro | 0 à 100 km/h : 3,4 s"
+                },
+                "Q2": {
+                    "35 TFSI 150 ch S tronic": "Description : Petit SUV urbain premium.\nType de moteur : 4 cylindres turbo essence 1.5 L\nPuissance : 150 ch | Couple : 250 Nm\nBoîte : Automatique S tronic 7 | Coffre : 405 L"
+                },
+                "Q3 / Q3 Sportback": {
+                    "35 TFSI 150 ch": "Description : SUV compact familial.\nType de moteur : 4 cylindres turbo essence 1.5 L\nPuissance : 150 ch | Couple : 250 Nm\nBoîte : Manuelle 6 ou S tronic 7 | Coffre : 530 à 675 L",
+                    "45 TFSI e 245 ch": "Description : SUV compact hybride rechargeable.\nType de moteur : 4 cylindres 1.4 turbo + moteur électrique\nPuissance cumulée : 245 ch | Couple cumulé : 400 Nm"
+                },
+                "Q4 e-tron": {
+                    "45 e-tron 286 ch": "Description : SUV compact 100 % électrique.\nType de moteur : Électrique arrière (batterie 77 kWh nets)\nPuissance : 286 ch | Couple : 545 Nm\nAutonomie WLTP : jusqu'à 562 km | Coffre : 520 L",
+                    "55 e-tron Quattro 340 ch": "Description : SUV compact électrique 4 roues motrices.\nType de moteur : 2 moteurs électriques (Quattro)\nPuissance cumulée : 340 ch | 0 à 100 km/h : 5,4 s"
+                },
+                "Q5": {
+                    "40 TDI 204 ch Quattro": "Description : SUV familial routier.\nType de moteur : 4 cylindres turbo diesel 2.0 L + 12V\nPuissance : 204 ch | Couple : 400 Nm\nTransmission : Quattro | Coffre : 520 L",
+                    "50 TFSI e 299 ch Quattro": "Description : SUV familial hybride rechargeable.\nType de moteur : 4 cylindres 2.0 TFSI + moteur électrique\nPuissance cumulée : 299 ch | Couple cumulé : 450 Nm"
+                },
+                "Q6 e-tron": {
+                    "Performance 306 ch (100 kWh)": "Description : SUV familial 100 % électrique 800V.\nType de moteur : Électrique arrière\nPuissance : 306 ch (326 ch Launch Control) | Couple : 485 Nm\nAutonomie WLTP : jusqu'à 641 km | Recharge DC : 270 kW",
+                    "SQ6 e-tron Quattro 489 ch": "Description : SUV électrique sportif 4 roues motrices.\nType de moteur : 2 moteurs électriques (517 ch Launch Control)\nCouple cumulé : 855 Nm | 0 à 100 km/h : 4,3 s"
+                },
+                "Q7 / Q8": {
+                    "50 TDI 286 ch Quattro": "Description : Grand SUV de luxe (5 ou 7 places sur Q7).\nType de moteur : V6 3.0 L turbo diesel + 48V\nPuissance : 286 ch | Couple : 600 Nm\nBoîte : Tiptronic 8 rapports | Coffre : 780 L (Q7 5 places)",
+                    "RS Q8 Performance 640 ch": "Description : Grand SUV coupé ultra-sportif.\nType de moteur : V8 4.0 L biturbo\nPuissance : 640 ch | Couple : 850 Nm\n0 à 100 km/h : 3,6 s"
+                }
+            },
+            "BMW": {
+                "Série 1": {
+                    "120 Essence Mild Hybrid 170 ch": "Description : Berline compacte dynamique.\nType de moteur : 3 cylindres turbo 1.5 L + hybridation 48V\nPuissance : 170 ch | Couple : 280 Nm\nBoîte : Automatique Steptronic 7 rapports | Coffre : 380 L",
+                    "120d Diesel 163 ch": "Description : Berline compacte routière.\nType de moteur : 4 cylindres turbo diesel 2.0 L + hybridation 48V\nPuissance : 163 ch | Couple : 400 Nm\nBoîte : Automatique Steptronic 7 rapports",
+                    "M135 xDrive 300 ch": "Description : Compacte sportive à transmission intégrale.\nType de moteur : 4 cylindres turbo essence 2.0 L\nPuissance : 300 ch | Couple : 400 Nm\nTransmission : Intégrale xDrive | 0 à 100 km/h : 4,9 s"
+                },
+                "Série 2 Coupé / Gran Coupé": {
+                    "220i 184 ch (Coupé)": "Description : Coupé sportif propulsion.\nType de moteur : 4 cylindres turbo essence 2.0 L\nPuissance : 184 ch | Couple : 300 Nm\nBoîte : Automatique Steptronic 8 rapports | Coffre : 390 L",
+                    "M240i xDrive 374 ch": "Description : Coupé sportif 6 cylindres.\nType de moteur : 6 cylindres en ligne 3.0 L TwinPower Turbo\nPuissance : 374 ch | Couple : 500 Nm\n0 à 100 km/h : 4,3 s",
+                    "M2 480 ch": "Description : Coupé propulsion haute performance.\nType de moteur : 6 cylindres en ligne 3.0 L biturbo\nPuissance : 480 ch | Couple : 600 Nm (boîte auto) / 550 Nm (manuelle)\n0 à 100 km/h : 4,0 s"
+                },
+                "Série 3 / M3": {
+                    "320d 190 ch": "Description : Berline routière (existe aussi en break Touring).\nType de moteur : 4 cylindres turbo diesel 2.0 L + hybridation 48V\nPuissance : 190 ch | Couple : 400 Nm\nTransmission : Propulsion (ou xDrive) | Boîte : ZF 8 rapports",
+                    "330e Hybride rechargeable 292 ch": "Description : Berline routière Plug-in Hybrid.\nType de moteur : 4 cylindres 2.0 turbo + moteur électrique\nPuissance cumulée : 292 ch | Couple cumulé : 420 Nm\nAutonomie électrique WLTP : jusqu'à 101 km",
+                    "M3 Competition M xDrive 530 ch": "Description : Berline ou break Touring ultra-sportif.\nType de moteur : 6 cylindres en ligne 3.0 L M TwinPower Turbo\nPuissance : 530 ch | Couple : 650 Nm\n0 à 100 km/h : 3,5 s"
+                },
+                "Série 4 / i4": {
+                    "420i Gran Coupé 184 ch": "Description : Coupé 4 portes à hayon.\nType de moteur : 4 cylindres turbo essence 2.0 L\nPuissance : 184 ch | Couple : 300 Nm | Coffre : 470 L",
+                    "i4 eDrive40 340 ch": "Description : Gran Coupé 100 % électrique propulsion.\nType de moteur : Électrique arrière (batterie 81,3 kWh nets)\nPuissance : 340 ch | Couple : 430 Nm\nAutonomie WLTP : jusqu'à 600 km",
+                    "i4 M50 xDrive 544 ch": "Description : Gran Coupé électrique haute performance.\nType de moteur : 2 moteurs électriques (xDrive)\nPuissance : 544 ch | Couple : 795 Nm | 0 à 100 km/h : 3,9 s"
+                },
+                "Série 5 / i5": {
+                    "520d 197 ch": "Description : Grande berline ou break Touring routier.\nType de moteur : 4 cylindres turbo diesel 2.0 L + 48V\nPuissance : 197 ch | Couple : 400 Nm | Coffre : 520 L (570 L Touring)",
+                    "i5 eDrive40 340 ch": "Description : Grande berline 100 % électrique.\nType de moteur : Électrique arrière (batterie 81,2 kWh)\nPuissance : 340 ch | Couple : 430 Nm | Autonomie WLTP : jusqu'à 582 km",
+                    "M5 Hybride rechargeable 727 ch": "Description : Berline ou break Touring ultra-puissant.\nType de moteur : V8 4.4 L biturbo + moteur électrique\nPuissance cumulée : 727 ch | Couple cumulé : 1 000 Nm\n0 à 100 km/h : 3,5 s"
+                },
+                "X1 / iX1": {
+                    "sDrive20i Mild Hybrid 170 ch": "Description : SUV compact premium.\nType de moteur : 3 cylindres turbo 1.5 L + hybridation 48V\nPuissance : 170 ch | Couple : 280 Nm | Coffre : 540 L",
+                    "iX1 eDrive20 204 ch": "Description : SUV compact 100 % électrique.\nType de moteur : Électrique avant (batterie 64,7 kWh)\nPuissance : 204 ch | Couple : 250 Nm | Autonomie WLTP : jusqu'à 475 km",
+                    "iX1 xDrive30 313 ch": "Description : SUV compact électrique 4 roues motrices.\nType de moteur : 2 moteurs électriques (xDrive)\nPuissance : 313 ch | Couple : 494 Nm | 0 à 100 km/h : 5,6 s"
+                },
+                "X3": {
+                    "20d xDrive 197 ch": "Description : SUV familial polyvalent.\nType de moteur : 4 cylindres turbo diesel 2.0 L + 48V\nPuissance : 197 ch | Couple : 400 Nm | Coffre : 570 L",
+                    "30e xDrive Hybride rechargeable 299 ch": "Description : SUV familial Plug-in Hybrid.\nType de moteur : 4 cylindres 2.0 turbo + moteur électrique\nPuissance cumulée : 299 ch | Couple cumulé : 450 Nm\nAutonomie électrique WLTP : jusqu'à 90 km",
+                    "M50 xDrive 398 ch": "Description : SUV familial sportif 6 cylindres.\nType de moteur : 6 cylindres en ligne 3.0 L turbo + 48V\nPuissance : 398 ch | Couple : 580 Nm | 0 à 100 km/h : 4,6 s"
+                },
+                "X5 / iX": {
+                    "X5 xDrive50e 489 ch": "Description : Grand SUV hybride rechargeable.\nType de moteur : 6 cylindres en ligne 3.0 L turbo + moteur électrique\nPuissance cumulée : 489 ch | Couple cumulé : 700 Nm\nAutonomie électrique WLTP : jusqu'à 110 km | Coffre : 500 L",
+                    "iX xDrive50 523 ch": "Description : Grand SUV 100 % électrique technologique.\nType de moteur : 2 moteurs électriques (batterie 105,2 kWh)\nPuissance : 523 ch | Couple : 765 Nm | Autonomie WLTP : jusqu'à 633 km"
+                }
+            },
+            "Citroën": {
+                "Ami": {
+                    "Quadricycle électrique 8 ch (sans permis)": "Description : Micro-citadine urbaine 2 places dès 14 ans.\nType de moteur : Électrique (batterie 5,5 kWh)\nPuissance : 8 ch (6 kW) | Vitesse max : 45 km/h\nAutonomie : 75 km | Recharge prise 220V : 4 h"
+                },
+                "C3 / ë-C3": {
+                    "Essence Turbo 100 ch": "Description : Citadine axée sur le confort.\nType de moteur : 3 cylindres turbo essence 1.2 L\nPuissance : 100 ch | Couple : 205 Nm | Coffre : 310 L",
+                    "Hybrid 100 ch e-DCS6": "Description : Citadine micro-hybride boîte automatique.\nType de moteur : 3 cylindres 1.2 turbo + hybridation 48V\nPuissance : 100 ch | Couple : 205 Nm",
+                    "Électrique ë-C3 113 ch": "Description : Citadine 100 % électrique accessible.\nType de moteur : Électrique (batterie LFP 44 kWh)\nPuissance : 113 ch | Couple : 120 Nm | Autonomie WLTP : 320 km"
+                },
+                "C3 Aircross / ë-C3 Aircross": {
+                    "Hybrid 136 ch e-DCS6": "Description : SUV compact familial disponible en 5 ou 7 places.\nType de moteur : 3 cylindres 1.2 turbo + hybridation 48V\nPuissance : 136 ch | Couple : 230 Nm | Coffre : 460 L (5 places)",
+                    "Électrique ë-C3 Aircross 113 ch": "Description : SUV compact 5 places 100 % électrique.\nType de moteur : Électrique (batterie LFP 44 kWh)\nPuissance : 113 ch | Autonomie WLTP : ~300 km"
+                },
+                "C4 / C4 X": {
+                    "Hybrid 136 ch": "Description : Berline compacte surélevée à suspension Citroën Advanced Comfort.\nType de moteur : 3 cylindres 1.2 turbo + hybridation 48V\nPuissance : 136 ch | Couple : 230 Nm | Coffre : 380 L (510 L sur C4 X)",
+                    "Électrique ë-C4 156 ch": "Description : Berline compacte 100 % électrique.\nType de moteur : Électrique synchrone (batterie 54 kWh)\nPuissance : 156 ch | Couple : 260 Nm | Autonomie WLTP : jusqu'à 420 km"
+                },
+                "C5 Aircross": {
+                    "Hybrid 136 ch": "Description : SUV familial modulable (3 sièges arrière indépendants).\nType de moteur : 3 cylindres 1.2 turbo + hybridation 48V\nPuissance : 136 ch | Couple : 230 Nm | Coffre : 580 à 720 L",
+                    "Hybride rechargeable 225 ch": "Description : SUV familial Plug-in Hybrid grand confort.\nType de moteur : 4 cylindres 1.6 turbo + moteur électrique\nPuissance cumulée : 225 ch | Couple cumulé : 360 Nm"
+                },
+                "C5 X": {
+                    "Hybride rechargeable 225 ch": "Description : Grande routière croisant berline, break et SUV.\nType de moteur : 4 cylindres 1.6 turbo + moteur électrique\nPuissance cumulée : 225 ch | Couple cumulé : 360 Nm\nSuspension active Citroën Advanced Comfort | Coffre : 485 L"
+                },
+                "Berlingo": {
+                    "Électrique ë-Berlingo 136 ch": "Description : Ludospace familial 5 ou 7 places électrique.\nType de moteur : Électrique (batterie LFP 50 kWh)\nPuissance : 136 ch | Couple : 270 Nm | Autonomie WLTP : jusqu'à 340 km\nCoffre : 775 L (taille M)"
+                }
+            },
+            "Cupra": {
+                "Leon / Leon Sportstourer": {
+                    "1.5 eTSI 150 ch DSG7": "Description : Berline compacte ou break sportif.\nType de moteur : 4 cylindres turbo essence 1.5 L + 48V\nPuissance : 150 ch | Couple : 250 Nm | Coffre : 380 L (620 L break)",
+                    "VZ e-Hybrid 272 ch": "Description : Compacte hybride rechargeable sportive.\nType de moteur : 4 cylindres 1.5 TSI + moteur électrique\nPuissance cumulée : 272 ch | Autonomie électrique : ~120 km WLTP",
+                    "VZ 2.0 TSI 333 ch 4Drive (Break)": "Description : Break sportif 4 roues motrices.\nType de moteur : 4 cylindres turbo essence 2.0 L\nPuissance : 333 ch | Couple : 420 Nm | 0 à 100 km/h : 4,8 s"
+                },
+                "Formentor": {
+                    "1.5 eTSI 150 ch DSG7": "Description : Crossover coupé au style sportif affirmé.\nType de moteur : 4 cylindres turbo essence 1.5 L + hybridation 48V\nPuissance : 150 ch | Couple : 250 Nm | Coffre : 450 L",
+                    "VZ e-Hybrid 272 ch": "Description : Crossover coupé hybride rechargeable.\nType de moteur : 4 cylindres 1.5 TSI + moteur électrique (19,7 kWh)\nPuissance cumulée : 272 ch | Couple cumulé : 400 Nm",
+                    "VZ 2.0 TSI 333 ch DSG7 4Drive": "Description : Crossover sportif à transmission intégrale.\nType de moteur : 4 cylindres turbo essence 2.0 L\nPuissance : 333 ch | Couple : 420 Nm | 0 à 100 km/h : 4,8 s"
+                },
+                "Born": {
+                    "Électrique 231 ch (59 kWh)": "Description : Berline compacte 100 % électrique sportive.\nType de moteur : Électrique arrière\nPuissance : 231 ch | Couple : 310 Nm | Autonomie WLTP : jusqu'à 425 km",
+                    "VZ Électrique 326 ch (79 kWh)": "Description : Compacte électrique haute performance.\nType de moteur : Électrique arrière haute puissance\nPuissance : 326 ch | Couple : 545 Nm | Autonomie WLTP : jusqu'à 599 km"
+                },
+                "Terramar": {
+                    "1.5 eTSI 150 ch DSG7": "Description : SUV familial sportif.\nType de moteur : 4 cylindres turbo essence 1.5 L + 48V\nPuissance : 150 ch | Couple : 250 Nm | Coffre : 540 à 642 L",
+                    "VZ e-Hybrid 272 ch": "Description : SUV familial hybride rechargeable.\nType de moteur : 4 cylindres 1.5 TSI + moteur électrique\nPuissance cumulée : 272 ch | Autonomie électrique : > 100 km WLTP"
+                },
+                "Tavascan": {
+                    "Endurance 286 ch (77 kWh)": "Description : SUV coupé 100 % électrique.\nType de moteur : Électrique arrière\nPuissance : 286 ch | Couple : 545 Nm | Autonomie WLTP : jusqu'à 568 km",
+                    "VZ AWD 340 ch (77 kWh)": "Description : SUV coupé électrique 4 roues motrices.\nType de moteur : 2 moteurs électriques\nPuissance cumulée : 340 ch | Couple cumulé : 679 Nm | 0 à 100 km/h : 5,5 s"
+                }
+            },
+            "Dacia": {
+                "Spring": {
+                    "Électrique 45 ch": "Description : Mini-citadine 100 % électrique ultra-économique.\nType de moteur : Électrique (batterie 26,8 kWh)\nPuissance : 45 ch | Couple : 125 Nm | Autonomie WLTP : 225 km | Coffre : 308 L",
+                    "Électrique 65 ch": "Description : Mini-citadine électrique plus vive pour usage périurbain.\nType de moteur : Électrique (batterie 26,8 kWh)\nPuissance : 65 ch | Couple : 113 Nm | Autonomie WLTP : 225 km"
+                },
+                "Sandero / Sandero Stepway": {
+                    "Essence SCe 65 ch": "Description : Citadine essentielle pour trajets urbains.\nType de moteur : 3 cylindres atmosphérique 1.0 L\nPuissance : 65 ch | Couple : 95 Nm | Boîte : Manuelle 5 rapports",
+                    "GPL Eco-G 100 ch": "Description : Citadine bicarburation Essence / GPL très économique.\nType de moteur : 3 cylindres turbo 1.0 L\nPuissance : 100 ch | Couple : 170 Nm | Coffre : 328 L",
+                    "Essence TCe 110 ch (Stepway)": "Description : Citadine baroudeuse polyvalente.\nType de moteur : 3 cylindres turbo essence 1.0 L\nPuissance : 110 ch | Couple : 200 Nm | Boîte : Manuelle 6 rapports"
+                },
+                "Duster": {
+                    "GPL Eco-G 100 ch": "Description : SUV polyvalent économique.\nType de moteur : 3 cylindres turbo 1.0 L bicarburation Essence / GPL\nPuissance : 100 ch | Couple : 170 Nm | Coffre : 517 L",
+                    "Mild Hybrid 130 ch (4x2 ou 4x4)": "Description : SUV baroudeur disponible en 4 roues motrices.\nType de moteur : 3 cylindres turbo 1.2 L + micro-hybridation 48V\nPuissance : 130 ch | Couple : 230 Nm | Garde au sol : 217 mm (4x4)",
+                    "Full Hybrid 140 ch": "Description : SUV hybride sans recharge.\nType de moteur : 4 cylindres essence 1.6 L + 2 moteurs électriques\nPuissance cumulée : 140 ch | Boîte : Automatique multimode"
+                },
+                "Jogger": {
+                    "GPL Eco-G 100 ch": "Description : Break familial 5 ou 7 places économique.\nType de moteur : 3 cylindres turbo 1.0 L Essence / GPL\nPuissance : 100 ch | Couple : 170 Nm | Coffre : 708 L (5 places)",
+                    "Full Hybrid 140 ch": "Description : Break familial 5 ou 7 places hybride.\nType de moteur : 4 cylindres essence 1.6 L + 2 moteurs électriques\nPuissance cumulée : 140 ch | Boîte : Automatique multimode"
+                },
+                "Bigster": {
+                    "Mild Hybrid 140 ch / 130 ch 4x4": "Description : Grand SUV familial spacieux.\nType de moteur : 3 cylindres turbo 1.2 L + hybridation 48V\nPuissance : 140 ch (4x2) ou 130 ch (4x4) | Coffre : jusqu'à 667 L",
+                    "Full Hybrid 155 ch": "Description : Grand SUV familial hybride nouvelle génération.\nType de moteur : 4 cylindres essence 1.8 L + 2 moteurs électriques\nPuissance cumulée : 155 ch | Boîte : Automatique multimode"
+                }
+            },
+            "Fiat": {
+                "500 / 500e": {
+                    "500 Hybrid 70 ch": "Description : Mini-citadine iconique micro-hybride.\nType de moteur : 3 cylindres 1.0 L + hybridation 12V\nPuissance : 70 ch | Couple : 92 Nm | Boîte : Manuelle 6 rapports",
+                    "500e Électrique 95 ch (23,8 kWh)": "Description : Mini-citadine 100 % électrique urbaine.\nType de moteur : Électrique synchrone\nPuissance : 95 ch | Couple : 220 Nm | Autonomie WLTP : 190 km",
+                    "500e Électrique 118 ch (42 kWh)": "Description : Mini-citadine 100 % électrique polyvalente.\nType de moteur : Électrique synchrone\nPuissance : 118 ch | Couple : 220 Nm | Autonomie WLTP : 320 km"
+                },
+                "Panda / Grande Panda": {
+                    "Panda Hybrid 70 ch": "Description : Citadine compacte et pratique.\nType de moteur : 3 cylindres 1.0 L + hybridation 12V\nPuissance : 70 ch | Couple : 92 Nm | Boîte : Manuelle 6 rapports",
+                    "Grande Panda Électrique 113 ch (44 kWh)": "Description : Citadine polyvalente 100 % électrique.\nType de moteur : Électrique (batterie LFP 44 kWh)\nPuissance : 113 ch | Autonomie WLTP : 320 km | Câble spirale intégré"
+                },
+                "600 / 600e": {
+                    "600 Hybrid 100 / 136 ch e-DCT6": "Description : Petit SUV urbain italien.\nType de moteur : 3 cylindres 1.2 turbo + hybridation 48V\nPuissance : 100 ou 136 ch | Couple : 205 / 230 Nm | Coffre : 385 L",
+                    "600e Électrique 156 ch (54 kWh)": "Description : Petit SUV urbain 100 % électrique.\nType de moteur : Électrique synchrone\nPuissance : 156 ch | Couple : 260 Nm | Autonomie WLTP : jusqu'à 409 km"
+                },
+                "Tipo": {
+                    "1.6 Multijet Diesel 130 ch": "Description : Berline compacte ou break SW spacieux.\nType de moteur : 4 cylindres turbo diesel 1.6 L\nPuissance : 130 ch | Couple : 320 Nm | Coffre : 440 L (550 L SW)"
+                }
+            },
+            "Ford": {
+                "Puma": {
+                    "1.0 EcoBoost mHybrid 125 ch": "Description : SUV urbain agile.\nType de moteur : 3 cylindres turbo 1.0 L + micro-hybridation 48V\nPuissance : 125 ch | Couple : 210 Nm | Coffre : 456 L (avec MegaBox 80 L)",
+                    "1.0 EcoBoost mHybrid 155 ch": "Description : SUV urbain dynamique.\nType de moteur : 3 cylindres turbo 1.0 L + micro-hybridation 48V\nPuissance : 155 ch | Couple : 240 Nm | Boîte : Powershift 7 rapports",
+                    "Puma Gen-E Électrique 168 ch": "Description : SUV urbain 100 % électrique.\nType de moteur : Électrique avant (batterie 43 kWh)\nPuissance : 168 ch | Couple : 290 Nm | Autonomie WLTP : jusqu'à 376 km"
+                },
+                "Focus": {
+                    "1.0 EcoBoost mHybrid 125 / 155 ch": "Description : Berline compacte ou break SW au châssis dynamique.\nType de moteur : 3 cylindres turbo 1.0 L + 48V\nPuissance : 125 ou 155 ch | Couple : 210 / 240 Nm | Coffre : 392 L (635 L SW)",
+                    "ST 2.3 EcoBoost 280 ch": "Description : Compacte sportive.\nType de moteur : 4 cylindres turbo essence 2.3 L\nPuissance : 280 ch | Couple : 420 Nm | 0 à 100 km/h : 5,7 s"
+                },
+                "Kuga": {
+                    "1.5 EcoBoost 150 ch": "Description : SUV familial essence.\nType de moteur : 3 cylindres turbo essence 1.5 L\nPuissance : 150 ch | Couple : 240 Nm | Coffre : 412 à 553 L",
+                    "Full Hybrid FHEV 180 ch": "Description : SUV familial hybride sans recharge (disponible en AWD).\nType de moteur : 4 cylindres 2.5 L cycle Atkinson + moteur électrique\nPuissance cumulée : 180 ch | Boîte : Automatique eCVT",
+                    "Hybride rechargeable PHEV 243 ch": "Description : SUV familial Plug-in Hybrid.\nType de moteur : 4 cylindres 2.5 L + moteur électrique\nPuissance cumulée : 243 ch | Autonomie électrique : ~69 km WLTP"
+                },
+                "Explorer / Capri (Électrique)": {
+                    "Extended Range Propulsion 286 ch (77 kWh)": "Description : SUV familial ou SUV coupé 100 % électrique.\nType de moteur : Électrique arrière\nPuissance : 286 ch | Couple : 545 Nm | Autonomie WLTP : jusqu'à 602 km",
+                    "Extended Range AWD 340 ch (79 kWh)": "Description : SUV électrique 4 roues motrices.\nType de moteur : 2 moteurs électriques\nPuissance : 340 ch | Couple : 679 Nm | 0 à 100 km/h : 5,3 s"
+                },
+                "Mustang Mach-E": {
+                    "Propulsion 269 ch (75 kWh)": "Description : SUV coupé 100 % électrique.\nType de moteur : Électrique arrière\nPuissance : 269 ch | Couple : 525 Nm | Autonomie WLTP : 470 km",
+                    "GT AWD 487 ch (98 kWh)": "Description : SUV coupé électrique haute performance.\nType de moteur : 2 moteurs électriques\nPuissance : 487 ch | Couple : 860 Nm | 0 à 100 km/h : 3,7 s"
+                },
+                "Mustang (Coupé / Cabriolet)": {
+                    "GT V8 5.0 L 446 ch": "Description : Muscle car iconique propulsion.\nType de moteur : V8 atmosphérique 5.0 L Coyote\nPuissance : 446 ch | Couple : 540 Nm | Boîte : Manuelle 6 ou Auto 10",
+                    "Dark Horse V8 5.0 L 453 ch": "Description : Version piste homologuée route.\nType de moteur : V8 atmosphérique 5.0 L préparé\nPuissance : 453 ch | Couple : 540 Nm | Freins Brembo & suspension MagneRide"
+                }
+            },
+            "Honda": {
+                "Jazz": {
+                    "e:HEV Full Hybrid 122 ch": "Description : Citadine monospace modulable à sièges magiques.\nType de moteur : 4 cylindres essence 1.5 L + 2 moteurs électriques\nPuissance : 122 ch | Couple moteur électrique : 253 Nm\nConsommation mixte : 4,5 L/100 km | Coffre : 304 L"
+                },
+                "Civic": {
+                    "e:HEV Full Hybrid 184 ch": "Description : Berline compacte hybride dynamique.\nType de moteur : 4 cylindres essence 2.0 L cycle Atkinson + 2 moteurs électriques\nPuissance : 184 ch | Couple moteur électrique : 315 Nm\nConsommation mixte : 4,7 L/100 km | Coffre : 410 L",
+                    "Type R 2.0 VTEC Turbo 329 ch": "Description : Compacte sportive traction de référence.\nType de moteur : 4 cylindres turbo essence 2.0 L VTEC\nPuissance : 329 ch | Couple : 420 Nm\nBoîte : Manuelle 6 rapports | 0 à 100 km/h : 5,4 s"
+                },
+                "HR-V": {
+                    "e:HEV Full Hybrid 131 ch": "Description : SUV urbain hybride.\nType de moteur : 4 cylindres essence 1.5 L + 2 moteurs électriques\nPuissance : 131 ch | Couple moteur électrique : 253 Nm | Coffre : 319 L"
+                },
+                "ZR-V": {
+                    "e:HEV Full Hybrid 184 ch": "Description : SUV compact familial au châssis de Civic.\nType de moteur : 4 cylindres essence 2.0 L + 2 moteurs électriques\nPuissance : 184 ch | Couple électrique : 315 Nm | Coffre : 380 L"
+                },
+                "CR-V": {
+                    "e:HEV Full Hybrid 184 ch (2WD ou AWD)": "Description : Grand SUV familial spacieux hybride.\nType de moteur : 4 cylindres essence 2.0 L + moteurs électriques\nPuissance : 184 ch | Couple électrique : 335 Nm | Coffre : 587 L",
+                    "e:PHEV Hybride rechargeable 184 ch": "Description : Grand SUV Plug-in Hybrid.\nType de moteur : 4 cylindres 2.0 L + moteur électrique (batterie 17,7 kWh)\nPuissance : 184 ch | Autonomie électrique : ~82 km WLTP | Coffre : 617 L"
+                }
+            },
+            "Hyundai": {
+                "i10": {
+                    "1.0 MPi 63 ch": "Description : Mini-citadine urbaine agile.\nType de moteur : 3 cylindres atmosphérique 1.0 L\nPuissance : 63 ch | Couple : 93 Nm | Coffre : 252 L"
+                },
+                "i20": {
+                    "1.0 T-GDi 100 ch": "Description : Citadine polyvalente bien équipée.\nType de moteur : 3 cylindres turbo essence 1.0 L\nPuissance : 100 ch | Couple : 172 Nm | Boîte : Manuelle 6 ou DCT7 | Coffre : 352 L"
+                },
+                "i30": {
+                    "1.5 T-GDi Mild Hybrid 140 ch": "Description : Berline compacte ou break SW.\nType de moteur : 4 cylindres turbo essence 1.5 L + 48V\nPuissance : 140 ch | Couple : 253 Nm | Coffre : 395 L (602 L SW)"
+                },
+                "Kona": {
+                    "Hybrid 129 ch DCT6": "Description : SUV urbain polyvalent hybride.\nType de moteur : 4 cylindres essence 1.6 L + moteur électrique\nPuissance cumulée : 129 ch | Couple cumulé : 265 Nm | Coffre : 466 L",
+                    "Électrique 218 ch (65,4 kWh)": "Description : SUV compact 100 % électrique grande autonomie.\nType de moteur : Électrique avant\nPuissance : 218 ch | Couple : 255 Nm | Autonomie WLTP : jusqu'à 514 km"
+                },
+                "Tucson": {
+                    "Mild Hybrid 160 ch": "Description : SUV familial polyvalent.\nType de moteur : 4 cylindres turbo essence 1.6 T-GDi + hybridation 48V\nPuissance : 160 ch | Couple : 265 Nm | Coffre : 546 à 616 L",
+                    "Full Hybrid 215 ch": "Description : SUV familial hybride sans recharge.\nType de moteur : 4 cylindres 1.6 turbo + moteur électrique\nPuissance cumulée : 215 ch | Couple cumulé : 367 Nm",
+                    "Hybride rechargeable 252 ch": "Description : SUV familial Plug-in Hybrid.\nType de moteur : 4 cylindres 1.6 turbo + moteur électrique\nPuissance cumulée : 252 ch | Couple cumulé : 367 Nm"
+                },
+                "Santa Fe": {
+                    "Full Hybrid 215 ch (4x2 ou 4x4)": "Description : Grand SUV familial 5, 6 ou 7 places.\nType de moteur : 4 cylindres 1.6 T-GDi + moteur électrique\nPuissance cumulée : 215 ch | Couple : 367 Nm | Coffre : jusqu'à 725 L",
+                    "Hybride rechargeable 253 ch AWD": "Description : Grand SUV familial Plug-in Hybrid 4 roues motrices.\nType de moteur : 4 cylindres 1.6 T-GDi + moteur électrique\nPuissance cumulée : 253 ch | Transmission : Intégrale HTRAC"
+                },
+                "Ioniq 5": {
+                    "Électrique Propulsion 229 ch (84 kWh)": "Description : Crossover électrique grande autonomie (architecture 800V).\nType de moteur : Électrique arrière\nPuissance : 229 ch | Couple : 350 Nm | Autonomie WLTP : jusqu'à 570 km",
+                    "Électrique AWD 325 ch (84 kWh)": "Description : Crossover électrique 4 roues motrices.\nType de moteur : 2 moteurs électriques\nPuissance cumulée : 325 ch | Couple cumulé : 605 Nm | 0 à 100 km/h : 5,3 s",
+                    "Ioniq 5 N 650 ch AWD": "Description : Crossover électrique ultra-sportif.\nType de moteur : 2 moteurs électriques haute performance\nPuissance : 650 ch (N Grin Boost) | Couple : 770 Nm | 0 à 100 km/h : 3,4 s"
+                },
+                "Ioniq 6": {
+                    "Électrique Propulsion 229 ch (77,4 kWh)": "Description : Berline profilée 100 % électrique (800V).\nType de moteur : Électrique arrière\nPuissance : 229 ch | Couple : 350 Nm | Autonomie WLTP : jusqu'à 614 km"
+                }
+            },
+            "Jeep": {
+                "Avenger": {
+                    "Essence 1.2 Turbo 100 ch": "Description : Petit SUV compact polyvalent.\nType de moteur : 3 cylindres turbo essence 1.2 L\nPuissance : 100 ch | Couple : 205 Nm | Boîte : Manuelle 6 rapports | Coffre : 380 L",
+                    "e-Hybrid 100 ch e-DCT6": "Description : Petit SUV micro-hybride boîte automatique.\nType de moteur : 3 cylindres 1.2 turbo + hybridation 48V\nPuissance : 100 ch | Couple : 205 Nm",
+                    "4xe Hybrid 136 ch AWD": "Description : Petit SUV 4 roues motrices.\nType de moteur : 3 cylindres 1.2 turbo + 2 moteurs électriques (avant/arrière)\nPuissance cumulée : 136 ch | Transmission : Intégrale 4xe",
+                    "Électrique 156 ch (54 kWh)": "Description : Petit SUV 100 % électrique.\nType de moteur : Électrique\nPuissance : 156 ch | Couple : 260 Nm | Autonomie WLTP : jusqu'à 400 km"
+                },
+                "Renegade": {
+                    "e-Hybrid 130 ch DDCT": "Description : SUV urbain au style baroudeur.\nType de moteur : 4 cylindres 1.5 turbo + hybridation 48V\nPuissance : 130 ch | Couple : 240 Nm | Coffre : 351 L",
+                    "4xe Hybride rechargeable 240 ch": "Description : SUV urbain 4x4 hybride rechargeable.\nType de moteur : 4 cylindres 1.3 turbo + moteur électrique arrière\nPuissance cumulée : 240 ch | Transmission : Intégrale 4xe"
+                },
+                "Compass": {
+                    "e-Hybrid 130 ch DDCT": "Description : SUV compact familial.\nType de moteur : 4 cylindres 1.5 turbo + hybridation 48V\nPuissance : 130 ch | Couple : 240 Nm | Coffre : 438 L",
+                    "4xe Hybride rechargeable 240 ch": "Description : SUV compact hybride rechargeable 4x4.\nType de moteur : 4 cylindres 1.3 turbo + moteur électrique arrière\nPuissance cumulée : 240 ch | Transmission : Intégrale 4xe"
+                },
+                "Wrangler": {
+                    "4xe Hybride rechargeable 380 ch": "Description : Tout-terrain franchisseur iconique.\nType de moteur : 4 cylindres 2.0 turbo + 2 moteurs électriques\nPuissance cumulée : 380 ch | Couple cumulé : 637 Nm\nTransmission : 4x4 permanent avec boîte courte"
+                }
+            },
+            "Kia": {
+                "Picanto": {
+                    "1.0 DPi 63 ch": "Description : Mini-citadine maniable et garantie 7 ans.\nType de moteur : 3 cylindres atmosphérique 1.0 L\nPuissance : 63 ch | Couple : 93 Nm | Coffre : 255 L"
+                },
+                "Ceed / XCeed": {
+                    "1.0 T-GDi 100 ch": "Description : Berline compacte ou crossover XCeed.\nType de moteur : 3 cylindres turbo essence 1.0 L\nPuissance : 100 ch | Couple : 172 Nm | Coffre : 395 L (426 L XCeed)"
+                },
+                "Niro": {
+                    "Full Hybrid 129 ch DCT6": "Description : Crossover familial compact hybride.\nType de moteur : 4 cylindres 1.6 L + moteur électrique\nPuissance cumulée : 129 ch | Couple cumulé : 265 Nm | Coffre : 451 L",
+                    "EV Électrique 204 ch (64,8 kWh)": "Description : Crossover familial 100 % électrique.\nType de moteur : Électrique avant\nPuissance : 204 ch | Couple : 255 Nm | Autonomie WLTP : jusqu'à 460 km"
+                },
+                "Sportage": {
+                    "Full Hybrid 215 ch": "Description : SUV familial hybride.\nType de moteur : 4 cylindres 1.6 turbo + moteur électrique\nPuissance cumulée : 215 ch | Couple cumulé : 367 Nm | Coffre : 526 à 587 L",
+                    "Hybride rechargeable 252 ch": "Description : SUV familial hybride rechargeable.\nType de moteur : 4 cylindres 1.6 turbo + moteur électrique\nPuissance cumulée : 252 ch | Couple cumulé : 367 Nm"
+                },
+                "Sorento": {
+                    "Full Hybrid 215 ch (7 places)": "Description : Grand SUV familial 7 places.\nType de moteur : 4 cylindres 1.6 T-GDi + moteur électrique\nPuissance cumulée : 215 ch | Couple : 367 Nm | Coffre : 608 L (5 places)",
+                    "Hybride rechargeable 253 ch AWD": "Description : Grand SUV 7 places Plug-in Hybrid 4x4.\nType de moteur : 4 cylindres 1.6 T-GDi + moteur électrique\nPuissance cumulée : 253 ch | Transmission : Intégrale AWD"
+                },
+                "EV3": {
+                    "Standard Range 204 ch (58,3 kWh)": "Description : SUV compact 100 % électrique.\nType de moteur : Électrique avant\nPuissance : 204 ch | Couple : 283 Nm | Autonomie WLTP : jusqu'à 436 km | Coffre : 460 L",
+                    "Long Range 204 ch (81,4 kWh)": "Description : SUV compact électrique grande autonomie.\nType de moteur : Électrique avant\nPuissance : 204 ch | Couple : 283 Nm | Autonomie WLTP : jusqu'à 605 km"
+                },
+                "EV6": {
+                    "Électrique Propulsion 229 ch": "Description : Crossover électrique routier (architecture 800V).\nType de moteur : Électrique arrière (batterie 84 kWh)\nPuissance : 229 ch | Couple : 350 Nm | Autonomie WLTP : jusqu'à 582 km",
+                    "Électrique GT AWD 585 ch": "Description : Crossover électrique haute performance.\nType de moteur : 2 moteurs électriques haute puissance\nPuissance cumulée : 585 ch | Couple cumulé : 740 Nm | 0 à 100 km/h : 3,5 s"
+                },
+                "EV9": {
+                    "Électrique Propulsion 203 ch (99,8 kWh)": "Description : Grand SUV familial 6 ou 7 places 100 % électrique.\nType de moteur : Électrique arrière (800V)\nPuissance : 203 ch | Couple : 350 Nm | Autonomie WLTP : jusqu'à 563 km",
+                    "Électrique AWD 384 ch (99,8 kWh)": "Description : Grand SUV familial électrique 4 roues motrices.\nType de moteur : 2 moteurs électriques\nPuissance cumulée : 384 ch | Couple cumulé : 700 Nm | 0 à 100 km/h : 5,3 s"
+                }
+            },
+            "Mazda": {
+                "Mazda2 / Mazda2 Hybrid": {
+                    "e-Skyactiv G 90 ch": "Description : Citadine légère et agile.\nType de moteur : 4 cylindres essence 1.5 L atmosphérique\nPuissance : 90 ch | Couple : 151 Nm | Boîte : Manuelle 6 rapports",
+                    "Hybrid 116 ch e-CVT": "Description : Citadine full hybride très sobre.\nType de moteur : 3 cylindres essence 1.5 L + moteur électrique\nPuissance cumulée : 116 ch | Consommation mixte : 3,8 L/100 km"
+                },
+                "Mazda3": {
+                    "e-Skyactiv G 140 ch": "Description : Berline compacte élégante à comportement précis.\nType de moteur : 4 cylindres essence 2.5 L atmosphérique + micro-hybridation 24V\nPuissance : 140 ch | Couple : 238 Nm | Coffre : 351 L",
+                    "e-Skyactiv X 186 ch": "Description : Berline compacte à allumage par compression contrôlée par étincelle.\nType de moteur : 4 cylindres essence 2.0 L + compresseur + 24V\nPuissance : 186 ch | Couple : 240 Nm"
+                },
+                "CX-30": {
+                    "e-Skyactiv G 140 ch": "Description : SUV compact raffiné.\nType de moteur : 4 cylindres essence 2.5 L atmosphérique + 24V\nPuissance : 140 ch | Couple : 238 Nm | Coffre : 430 L",
+                    "e-Skyactiv X 186 ch": "Description : SUV compact sobre et vif.\nType de moteur : 4 cylindres essence 2.0 L + compresseur + 24V\nPuissance : 186 ch | Couple : 240 Nm"
+                },
+                "CX-5": {
+                    "e-Skyactiv G 165 ch": "Description : SUV familial sobre et raffiné.\nType de moteur : 4 cylindres essence 2.0 L atmosphérique\nPuissance : 165 ch | Couple : 213 Nm | Coffre : 442 à 522 L"
+                },
+                "CX-60 / CX-80": {
+                    "e-Skyactiv PHEV 327 ch AWD": "Description : Grand SUV familial hybride rechargeable (7 places sur CX-80).\nType de moteur : 4 cylindres 2.5 L + moteur électrique\nPuissance cumulée : 327 ch | Couple cumulé : 500 Nm | Coffre : 570 L (CX-60)",
+                    "e-Skyactiv D 6 cylindres 254 ch AWD": "Description : Grand SUV routier 6 cylindres en ligne diesel.\nType de moteur : 6 cylindres en ligne turbo diesel 3.3 L + 48V\nPuissance : 254 ch | Couple : 550 Nm | Consommation mixte : ~5,3 L/100 km"
+                },
+                "MX-5": {
+                    "1.5 Skyactiv-G 132 ch": "Description : Roadster cabriolet léger propulsion.\nType de moteur : 4 cylindres atmosphérique 1.5 L\nPuissance : 132 ch | Couple : 152 Nm | Poids : ~1 000 kg | Boîte : Manuelle 6"
+                }
+            },
+            "Mercedes-Benz": {
+                "Classe A": {
+                    "A 200 Essence 163 ch": "Description : Berline compacte.\nType de moteur : 4 cylindres turbo 1.33 L + hybridation 48V\nPuissance : 163 ch | Couple : 270 Nm | Boîte : Automatique 7G-DCT | Coffre : 355 L",
+                    "A 250 e Hybride rechargeable 218 ch": "Description : Berline compacte Plug-in Hybrid.\nType de moteur : 4 cylindres 1.33 L turbo + moteur électrique\nPuissance cumulée : 218 ch | Couple cumulé : 450 Nm | Autonomie électrique : ~75 km",
+                    "AMG A 45 S 4MATIC+ 421 ch": "Description : Compacte ultra-sportive.\nType de moteur : 4 cylindres 2.0 L turbo assemblé à la main\nPuissance : 421 ch | Couple : 500 Nm | 0 à 100 km/h : 3,9 s"
+                },
+                "CLA Coupé / Shooting Brake": {
+                    "CLA 200 163 ch": "Description : Coupé 4 portes ou break de chasse.\nType de moteur : 4 cylindres turbo 1.33 L + 48V\nPuissance : 163 ch | Couple : 270 Nm | Coffre : 460 L (485 L Shooting Brake)",
+                    "CLA 250 e 218 ch": "Description : Coupé 4 portes hybride rechargeable.\nType de moteur : 4 cylindres 1.33 L turbo + moteur électrique\nPuissance cumulée : 218 ch | Couple cumulé : 450 Nm"
+                },
+                "Classe C": {
+                    "C 200 Essence 204 ch": "Description : Berline ou break routier statutaire.\nType de moteur : 4 cylindres turbo 1.5 L + micro-hybridation 48V (+ 23 ch)\nPuissance : 204 ch | Couple : 300 Nm | Coffre : 455 L",
+                    "C 300 e Hybride rechargeable 313 ch": "Description : Berline hybride rechargeable grande autonomie électrique.\nType de moteur : 4 cylindres 2.0 L turbo + moteur électrique (25,4 kWh)\nPuissance cumulée : 313 ch | Couple cumulé : 550 Nm | Autonomie électrique : jusqu'à 110 km",
+                    "AMG C 63 S E Performance 680 ch": "Description : Berline ou break ultra-sportif hybride.\nType de moteur : 4 cylindres 2.0 L turbo électrique + moteur électrique arrière\nPuissance cumulée : 680 ch | Couple cumulé : 1 020 Nm | 0 à 100 km/h : 3,4 s"
+                },
+                "Classe E": {
+                    "E 220 d 197 ch": "Description : Grande routière confort (berline ou break).\nType de moteur : 4 cylindres turbo diesel 2.0 L + 48V (+ 23 ch)\nPuissance : 197 ch | Couple : 440 Nm | Coffre : 540 L (615 L break)",
+                    "E 300 e 313 ch": "Description : Grande berline hybride rechargeable.\nType de moteur : 4 cylindres 2.0 L turbo + moteur électrique\nPuissance cumulée : 313 ch | Autonomie électrique WLTP : jusqu'à 115 km"
+                },
+                "GLA / EQA": {
+                    "GLA 200 163 ch": "Description : SUV compact urbain premium.\nType de moteur : 4 cylindres turbo 1.33 L + 48V\nPuissance : 163 ch | Couple : 270 Nm | Coffre : 435 L",
+                    "EQA 250+ Électrique 190 ch": "Description : SUV compact 100 % électrique.\nType de moteur : Électrique avant (batterie 70,5 kWh)\nPuissance : 190 ch | Couple : 385 Nm | Autonomie WLTP : jusqu'à 560 km"
+                },
+                "GLB / EQB": {
+                    "GLB 200 d 150 ch (5 ou 7 places)": "Description : SUV compact familial modulable.\nType de moteur : 4 cylindres turbo diesel 2.0 L\nPuissance : 150 ch | Couple : 320 Nm | Coffre : 570 L (en 5 places)",
+                    "EQB 250+ Électrique 190 ch": "Description : SUV familial électrique 5 ou 7 places.\nType de moteur : Électrique avant (batterie 70,5 kWh)\nPuissance : 190 ch | Autonomie WLTP : jusqu'à 536 km"
+                },
+                "GLC": {
+                    "GLC 220 d 4MATIC 197 ch": "Description : SUV familial routier.\nType de moteur : 4 cylindres turbo diesel 2.0 L + hybridation 48V\nPuissance : 197 ch (+ 23 ch boost) | Couple : 440 Nm | Coffre : 620 L",
+                    "GLC 300 e 4MATIC 313 ch": "Description : SUV familial hybride rechargeable essence.\nType de moteur : 4 cylindres 2.0 L turbo + moteur électrique (batterie 31,2 kWh)\nPuissance cumulée : 313 ch | Couple cumulé : 550 Nm | Autonomie électrique : ~120 km"
+                }
+            },
+            "Mini": {
+                "Cooper (3 et 5 portes)": {
+                    "Cooper C Essence 156 ch": "Description : Citadine iconique au comportement karting.\nType de moteur : 3 cylindres turbo essence 1.5 L\nPuissance : 156 ch | Couple : 230 Nm | Boîte : Automatique 7 rapports",
+                    "Cooper S Essence 204 ch": "Description : Citadine sportive.\nType de moteur : 4 cylindres turbo essence 2.0 L\nPuissance : 204 ch | Couple : 300 Nm | 0 à 100 km/h : 6,6 s",
+                    "Cooper SE Électrique 218 ch (54,2 kWh)": "Description : Citadine 100 % électrique.\nType de moteur : Électrique avant\nPuissance : 218 ch | Couple : 330 Nm | Autonomie WLTP : jusqu'à 402 km"
+                },
+                "Aceman": {
+                    "Aceman E 184 ch (42,5 kWh)": "Description : Petit crossover urbain 100 % électrique.\nType de moteur : Électrique avant\nPuissance : 184 ch | Couple : 290 Nm | Autonomie WLTP : 310 km | Coffre : 300 L",
+                    "Aceman SE 218 ch (54,2 kWh)": "Description : Petit crossover urbain électrique grande autonomie.\nType de moteur : Électrique avant\nPuissance : 218 ch | Couple : 330 Nm | Autonomie WLTP : jusqu'à 406 km"
+                },
+                "Countryman": {
+                    "Countryman C Mild Hybrid 170 ch": "Description : Grand SUV compact Mini.\nType de moteur : 3 cylindres turbo 1.5 L + hybridation 48V\nPuissance : 170 ch | Couple : 280 Nm | Boîte : Steptronic 7 | Coffre : 460 L",
+                    "Countryman JCW ALL4 300 ch": "Description : SUV compact sportif 4 roues motrices.\nType de moteur : 4 cylindres turbo essence 2.0 L\nPuissance : 300 ch | Couple : 400 Nm | 0 à 100 km/h : 5,4 s",
+                    "Countryman SE ALL4 Électrique 313 ch": "Description : SUV électrique 4 roues motrices.\nType de moteur : 2 moteurs électriques (ALL4)\nPuissance : 313 ch | Couple : 494 Nm | Autonomie WLTP : jusqu'à 433 km"
+                }
+            },
+            "Nissan": {
+                "Juke": {
+                    "Essence DIG-T 114 ch": "Description : SUV urbain compact.\nType de moteur : 3 cylindres turbo essence 1.0 L\nPuissance : 114 ch | Couple : 200 Nm | Boîte : Manuelle 6 ou DCT7 | Coffre : 422 L",
+                    "Hybrid 143 ch": "Description : SUV urbain hybride.\nType de moteur : 4 cylindres essence + moteur électrique\nPuissance cumulée : 143 ch | Boîte : Automatique multimode"
+                },
+                "Qashqai": {
+                    "Mild Hybrid 158 ch Xtronic": "Description : SUV familial polyvalent.\nType de moteur : 4 cylindres turbo 1.3 L + micro-hybridation 12V\nPuissance : 158 ch | Couple : 270 Nm | Boîte : Automatique Xtronic | Coffre : 504 L",
+                    "Hybride e-POWER 190 ch": "Description : SUV hybride où seul le moteur électrique entraîne les roues.\nType de moteur : Moteur électrique 190 ch alimenté par un 3 cylindres 1.5 turbo générateur\nPuissance : 190 ch | Couple : 330 Nm instantanés | Conso : 5,1 L/100 km"
+                },
+                "X-Trail": {
+                    "Hybride e-POWER 204 ch (2WD)": "Description : Grand SUV familial 5 ou 7 places.\nType de moteur : Moteur électrique 204 ch + générateur essence 1.5 turbo\nPuissance : 204 ch | Couple : 330 Nm | Coffre : 585 L (5 places)",
+                    "Hybride e-POWER e-4ORCE 213 ch (4x4)": "Description : Grand SUV familial 4 roues motrices.\nType de moteur : 2 moteurs électriques (avant + arrière) + générateur essence\nPuissance cumulée : 213 ch | Transmission : Intégrale e-4ORCE"
+                },
+                "Ariya": {
+                    "Électrique 218 ch (63 kWh)": "Description : SUV coupé familial 100 % électrique.\nType de moteur : Électrique avant\nPuissance : 218 ch | Couple : 300 Nm | Autonomie WLTP : 404 km | Coffre : 468 L",
+                    "Électrique 242 ch (87 kWh)": "Description : SUV coupé électrique grande autonomie.\nType de moteur : Électrique avant\nPuissance : 242 ch | Couple : 300 Nm | Autonomie WLTP : jusqu'à 536 km"
+                }
+            },
+            "Opel": {
+                "Corsa": {
+                    "Essence 1.2 Turbo 100 ch": "Description : Citadine polyvalente.\nType de moteur : 3 cylindres turbo essence 1.2 L\nPuissance : 100 ch | Couple : 205 Nm | Boîte : Manuelle 6 rapports | Coffre : 309 L",
+                    "Hybrid 136 ch e-DCT6": "Description : Citadine micro-hybride 48V.\nType de moteur : 3 cylindres 1.2 turbo + moteur électrique\nPuissance : 136 ch | Couple : 230 Nm",
+                    "Corsa Electric 156 ch (51 kWh)": "Description : Citadine 100 % électrique.\nType de moteur : Électrique synchrone\nPuissance : 156 ch | Couple : 260 Nm | Autonomie WLTP : 405 km"
+                },
+                "Astra / Astra Sports Tourer": {
+                    "Hybrid 136 ch e-DCT6": "Description : Berline compacte ou break Sports Tourer.\nType de moteur : 3 cylindres 1.2 turbo + 48V\nPuissance : 136 ch | Couple : 230 Nm | Coffre : 422 L (597 L break)",
+                    "Astra Electric 156 ch (54 kWh)": "Description : Compacte ou break 100 % électrique.\nType de moteur : Électrique synchrone\nPuissance : 156 ch | Couple : 270 Nm | Autonomie WLTP : 418 km"
+                },
+                "Mokka": {
+                    "Hybrid 136 ch e-DCT6": "Description : SUV urbain compact.\nType de moteur : 3 cylindres 1.2 turbo + 48V\nPuissance : 136 ch | Couple : 230 Nm | Coffre : 350 L",
+                    "Mokka Electric 156 ch (54 kWh)": "Description : SUV urbain 100 % électrique.\nType de moteur : Électrique synchrone\nPuissance : 156 ch | Couple : 260 Nm | Autonomie WLTP : 407 km"
+                },
+                "Grandland": {
+                    "Hybrid 136 ch e-DCT6": "Description : SUV familial spacieux.\nType de moteur : 3 cylindres 1.2 turbo + 48V\nPuissance : 136 ch | Couple : 230 Nm | Coffre : 550 L",
+                    "Grandland Electric 213 ch (73 kWh)": "Description : SUV familial 100 % électrique.\nType de moteur : Électrique avant\nPuissance : 213 ch | Couple : 345 Nm | Autonomie WLTP : jusqu'à 523 km"
+                }
+            },
+            "Peugeot": {
+                "208": {
+                    "Essence PureTech 100 ch": "Description : Citadine polyvalente.\nType de moteur : 3 cylindres turbo essence 1.2 L\nPuissance : 100 ch | Couple : 205 Nm | Boîte : Manuelle 6 rapports | Coffre : 309 L",
+                    "Hybrid 136 ch e-DCS6": "Description : Citadine micro-hybride 48V.\nType de moteur : 3 cylindres 1.2 turbo + moteur électrique\nPuissance : 136 ch | Couple : 230 Nm | Boîte : Automatique 6 rapports",
+                    "Électrique e-208 156 ch": "Description : Citadine 100 % électrique.\nType de moteur : Électrique synchrone (batterie 51 kWh)\nPuissance : 156 ch | Couple : 260 Nm | Autonomie WLTP : 410 km"
+                },
+                "308 / 308 SW": {
+                    "Hybrid 136 ch e-DCS6": "Description : Berline compacte ou break SW.\nType de moteur : 3 cylindres 1.2 turbo + hybridation 48V\nPuissance : 136 ch | Couple : 230 Nm | Coffre : 412 L (608 L SW)",
+                    "Hybride rechargeable 225 ch": "Description : Berline compacte Plug-in Hybrid.\nType de moteur : 4 cylindres 1.6 turbo + moteur électrique\nPuissance cumulée : 225 ch | Couple cumulé : 360 Nm",
+                    "Électrique e-308 156 ch": "Description : Berline compacte ou break 100 % électrique.\nType de moteur : Électrique synchrone (batterie 54 kWh)\nPuissance : 156 ch | Couple : 270 Nm | Autonomie WLTP : 413 km"
+                },
+                "408": {
+                    "Hybrid 136 ch e-DCS6": "Description : Berline fastback surélevée.\nType de moteur : 3 cylindres 1.2 turbo + 48V\nPuissance : 136 ch | Couple : 230 Nm | Coffre : 536 L",
+                    "Hybride rechargeable 225 ch": "Description : Berline fastback Plug-in Hybrid.\nType de moteur : 4 cylindres 1.6 turbo + moteur électrique\nPuissance cumulée : 225 ch | Couple cumulé : 360 Nm | Coffre : 471 L"
+                },
+                "2008": {
+                    "Hybrid 136 ch e-DCS6": "Description : SUV urbain polyvalent.\nType de moteur : 3 cylindres 1.2 turbo + hybridation 48V\nPuissance : 136 ch | Couple : 230 Nm | Coffre : 434 L",
+                    "Électrique e-2008 156 ch": "Description : SUV urbain 100 % électrique.\nType de moteur : Électrique synchrone (batterie 54 kWh)\nPuissance : 156 ch | Couple : 260 Nm | Autonomie WLTP : jusqu'à 406 km"
+                },
+                "3008": {
+                    "Hybrid 136 ch e-DCS6": "Description : SUV fastback familial.\nType de moteur : 3 cylindres 1.2 turbo + hybridation 48V\nPuissance : 136 ch | Couple : 230 Nm | Coffre : 520 L",
+                    "Électrique E-3008 210 ch": "Description : SUV familial 100 % électrique.\nType de moteur : Électrique synchrone (batterie 73 kWh)\nPuissance : 210 ch | Couple : 345 Nm | Autonomie WLTP : 527 km",
+                    "Électrique E-3008 Dual Motor 320 ch": "Description : SUV familial 100 % électrique 4 roues motrices.\nType de moteur : 2 moteurs électriques (avant + arrière)\nPuissance cumulée : 320 ch | Couple cumulé : 509 Nm"
+                },
+                "5008": {
+                    "Hybrid 136 ch e-DCS6": "Description : Grand SUV familial 7 places.\nType de moteur : 3 cylindres 1.2 turbo + hybridation 48V\nPuissance : 136 ch | Couple : 230 Nm | Coffre : 748 L (en 5 places)",
+                    "Électrique E-5008 210 ch": "Description : Grand SUV familial 7 places 100 % électrique.\nType de moteur : Électrique synchrone (batterie 73 kWh)\nPuissance : 210 ch | Couple : 345 Nm | Autonomie WLTP : jusqu'à 502 km"
+                }
+            },
+            "Porsche": {
+                "718 Cayman / Boxster": {
+                    "718 2.0 Turbo 300 ch": "Description : Coupé ou roadster sportif à moteur central.\nType de moteur : Flat-4 (4 cylindres à plat) 2.0 L turbo\nPuissance : 300 ch | Couple : 380 Nm | 0 à 100 km/h : 4,9 s (PDK)",
+                    "GTS 4.0 Flat-6 400 ch": "Description : Coupé ou roadster atmosphérique puriste.\nType de moteur : Flat-6 4.0 L atmosphérique\nPuissance : 400 ch | Couple : 420 Nm (manuelle) / 430 Nm (PDK) | 0 à 100 km/h : 4,0 s"
+                },
+                "911 (992)": {
+                    "Carrera 394 ch PDK": "Description : Coupé sportif iconique à moteur arrière.\nType de moteur : Flat-6 3.0 L biturbo\nPuissance : 394 ch | Couple : 450 Nm | 0 à 100 km/h : 4,1 s",
+                    "Carrera GTS T-Hybrid 541 ch": "Description : Coupé sportif hybride haute performance.\nType de moteur : Flat-6 3.6 L turbo + moteur électrique intégré\nPuissance cumulée : 541 ch | Couple cumulé : 610 Nm | 0 à 100 km/h : 3,0 s",
+                    "GT3 510 ch": "Description : Coupé sportif taillé pour le circuit.\nType de moteur : Flat-6 4.0 L atmosphérique (9 000 tr/min)\nPuissance : 510 ch | Couple : 450 Nm | 0 à 100 km/h : 3,4 s"
+                },
+                "Taycan": {
+                    "Taycan Propulsion 408 ch (89 kWh)": "Description : Berline ou break Cross Turismo 100 % électrique 800V.\nType de moteur : Électrique arrière\nPuissance : 408 ch | Couple : 410 Nm | Autonomie WLTP : jusqu'à 590 km",
+                    "Taycan Turbo GT 1 034 ch": "Description : Berline électrique aux performances extrêmes.\nType de moteur : 2 moteurs électriques haute performance\nPuissance : jusqu'à 1 034 ch (1 108 ch sur 2 s) | Couple : 1 240 Nm | 0 à 100 km/h : 2,2 s"
+                },
+                "Macan": {
+                    "Macan 4 Électrique 408 ch": "Description : SUV sportif 100 % électrique 4 roues motrices.\nType de moteur : 2 moteurs électriques PSM (batterie 100 kWh)\nPuissance : 408 ch | Couple : 650 Nm | Autonomie WLTP : jusqu'à 613 km",
+                    "Macan Turbo Électrique 639 ch": "Description : SUV sportif électrique très hautes performances.\nType de moteur : 2 moteurs électriques haute puissance\nPuissance : 639 ch | Couple : 1 130 Nm | 0 à 100 km/h : 3,3 s"
+                },
+                "Cayenne": {
+                    "Cayenne E-Hybrid 470 ch": "Description : Grand SUV sportif hybride rechargeable.\nType de moteur : V6 3.0 turbo + moteur électrique\nPuissance cumulée : 470 ch | Couple cumulé : 650 Nm | Coffre : 627 L",
+                    "Cayenne Turbo E-Hybrid 739 ch": "Description : Grand SUV ultra-puissant.\nType de moteur : V8 4.0 L biturbo + moteur électrique\nPuissance cumulée : 739 ch | Couple cumulé : 950 Nm | 0 à 100 km/h : 3,7 s"
+                }
+            },
+            "Renault": {
+                "Twingo E-Tech": {
+                    "Électrique 82 ch": "Description : Mini-citadine urbaine très maniable (rayon de braquage 4,30 m).\nType de moteur : Électrique arrière (batterie 22 kWh)\nPuissance : 82 ch | Couple : 160 Nm | Autonomie WLTP : 190 km | Coffre : 219 L"
+                },
+                "Renault 5 E-Tech": {
+                    "Électrique 120 ch (40 kWh)": "Description : Citadine néo-rétro 100 % électrique.\nType de moteur : Électrique synchrone à rotor bobiné\nPuissance : 120 ch | Couple : 225 Nm | Autonomie WLTP : jusqu'à 312 km | Coffre : 326 L",
+                    "Électrique 150 ch (52 kWh)": "Description : Citadine néo-rétro électrique grande autonomie.\nType de moteur : Électrique synchrone\nPuissance : 150 ch | Couple : 245 Nm | Autonomie WLTP : jusqu'à 410 km | Charge DC : 100 kW"
+                },
+                "Clio V": {
+                    "Essence 1.0 TCe 90 ch": "Description : Citadine polyvalente 5 portes.\nType de moteur : 3 cylindres turbo essence (999 cm³)\nPuissance : 90 ch | Couple : 160 Nm | Boîte : Manuelle 6 rapports | Coffre : 391 L",
+                    "GPL Eco-G 100 ch": "Description : Citadine bicarburation Essence / GPL économique.\nType de moteur : 3 cylindres turbo 1.0 L\nPuissance : 100 ch | Couple : 170 Nm | Boîte : Manuelle 6 rapports",
+                    "Full Hybrid E-Tech 145 ch": "Description : Citadine hybride auto-rechargeable.\nType de moteur : 4 cylindres essence 1.6 + 2 moteurs électriques\nPuissance cumulée : 145 ch | Boîte : Automatique multimode | Conso : 4,2 L/100 km"
+                },
+                "Captur II": {
+                    "GPL Eco-G 100 ch": "Description : SUV urbain bicarburation Essence / GPL.\nType de moteur : 3 cylindres turbo 1.0 L\nPuissance : 100 ch | Couple : 170 Nm | Coffre : 422 à 536 L",
+                    "Mild Hybrid 160 ch EDC": "Description : SUV urbain micro-hybride dynamique.\nType de moteur : 4 cylindres turbo 1.3 L + 12V\nPuissance : 160 ch | Couple : 270 Nm | Boîte : Automatique EDC 7",
+                    "Full Hybrid E-Tech 145 ch": "Description : SUV urbain hybride sans recharge.\nType de moteur : 4 cylindres essence 1.6 L + 2 moteurs électriques\nPuissance cumulée : 145 ch | Conso mixte : 4,6 L/100 km"
+                },
+                "Symbioz": {
+                    "Full Hybrid E-Tech 145 ch": "Description : SUV compact familial modulable avec banquette coulissante.\nType de moteur : 4 cylindres essence 1.6 L + 2 moteurs électriques\nPuissance cumulée : 145 ch | Boîte : Automatique multimode | Coffre : 492 à 624 L"
+                },
+                "Mégane E-Tech": {
+                    "Électrique EV40 130 ch": "Description : Berline compacte 100 % électrique.\nType de moteur : Électrique synchrone (batterie 40 kWh)\nPuissance : 130 ch | Couple : 250 Nm | Autonomie WLTP : 300 km | Coffre : 440 L",
+                    "Électrique EV60 220 ch": "Description : Berline compacte 100 % électrique grande autonomie.\nType de moteur : Électrique synchrone (batterie 60 kWh)\nPuissance : 220 ch | Couple : 300 Nm | Autonomie WLTP : 450 km"
+                },
+                "Scénic E-Tech": {
+                    "Électrique Autonomie Confort 170 ch (60 kWh)": "Description : Crossover familial 100 % électrique.\nType de moteur : Électrique synchrone\nPuissance : 170 ch | Couple : 280 Nm | Autonomie WLTP : jusqu'à 430 km | Coffre : 545 L",
+                    "Électrique Grande Autonomie 220 ch (87 kWh)": "Description : Crossover familial électrique longue distance.\nType de moteur : Électrique synchrone\nPuissance : 220 ch | Couple : 300 Nm | Autonomie WLTP : jusqu'à 625 km"
+                },
+                "Austral": {
+                    "Mild Hybrid 130 ch": "Description : SUV familial routier.\nType de moteur : 3 cylindres turbo 1.2 L + 48V\nPuissance : 130 ch | Couple : 205 Nm | Coffre : 500 à 575 L",
+                    "Full Hybrid E-Tech 200 ch": "Description : SUV familial hybride performant.\nType de moteur : 3 cylindres turbo 1.2 L + 2 moteurs électriques\nPuissance cumulée : 200 ch | Conso mixte : 4,6 L/100 km"
+                },
+                "Espace VI / Rafale": {
+                    "Full Hybrid E-Tech 200 ch": "Description : Grand SUV familial 5/7 places (Espace) ou SUV coupé (Rafale).\nType de moteur : 3 cylindres turbo 1.2 L + 2 moteurs électriques\nPuissance cumulée : 200 ch | 4 roues directrices 4Control Advanced",
+                    "E-Tech 4x4 300 ch Hybride rechargeable (Rafale)": "Description : SUV coupé sportif hybride rechargeable 4 roues motrices.\nType de moteur : 3 cylindres 1.2 turbo + 3 moteurs électriques\nPuissance cumulée : 300 ch | Autonomie électrique : jusqu'à 105 km WLTP"
+                }
+            },
+            "Seat": {
+                "Ibiza": {
+                    "1.0 TSI 95 ch": "Description : Citadine polyvalente vive.\nType de moteur : 3 cylindres turbo essence 1.0 L\nPuissance : 95 ch | Couple : 175 Nm | Boîte : Manuelle 5 rapports | Coffre : 355 L",
+                    "1.0 TSI 115 ch DSG7": "Description : Citadine polyvalente à boîte automatique.\nType de moteur : 3 cylindres turbo essence 1.0 L\nPuissance : 115 ch | Couple : 200 Nm | Boîte : Automatique DSG7"
+                },
+                "Arona": {
+                    "1.0 TSI 115 ch DSG7": "Description : SUV urbain compact.\nType de moteur : 3 cylindres turbo essence 1.0 L\nPuissance : 115 ch | Couple : 200 Nm | Boîte : Automatique DSG7 | Coffre : 400 L"
+                },
+                "Leon / Leon Sportstourer": {
+                    "1.5 eTSI 150 ch DSG7": "Description : Berline compacte ou break Sportstourer.\nType de moteur : 4 cylindres turbo essence 1.5 L + 48V\nPuissance : 150 ch | Couple : 250 Nm | Coffre : 380 L (620 L break)"
+                },
+                "Ateca": {
+                    "1.5 TSI 150 ch DSG7": "Description : SUV compact familial.\nType de moteur : 4 cylindres turbo essence 1.5 L\nPuissance : 150 ch | Couple : 250 Nm | Coffre : 510 L"
+                }
+            },
+            "Skoda": {
+                "Fabia": {
+                    "1.0 TSI 95 ch": "Description : Citadine spacieuse et pratique.\nType de moteur : 3 cylindres turbo essence 1.0 L\nPuissance : 95 ch | Couple : 175 Nm | Coffre : 380 L",
+                    "1.0 TSI 116 ch DSG7": "Description : Citadine polyvalente boîte automatique.\nType de moteur : 3 cylindres turbo essence 1.0 L\nPuissance : 116 ch | Couple : 200 Nm | Boîte : DSG7"
+                },
+                "Scala": {
+                    "1.5 TSI 150 ch DSG7": "Description : Berline compacte très habitable.\nType de moteur : 4 cylindres turbo essence 1.5 L\nPuissance : 150 ch | Couple : 250 Nm | Coffre : 467 L"
+                },
+                "Octavia / Octavia Combi": {
+                    "1.5 m-HEV 150 ch DSG7": "Description : Berline ou break familial très spacieux.\nType de moteur : 4 cylindres turbo essence 1.5 L + 48V\nPuissance : 150 ch | Couple : 250 Nm | Coffre : 600 L (640 L Combi)",
+                    "2.0 TDI 150 ch DSG7": "Description : Grande routière sobre et endurante.\nType de moteur : 4 cylindres turbo diesel 2.0 L\nPuissance : 150 ch | Couple : 360 Nm | Boîte : DSG7",
+                    "RS 2.0 TSI 265 ch DSG7": "Description : Berline ou break sportif.\nType de moteur : 4 cylindres turbo essence 2.0 L\nPuissance : 265 ch | Couple : 370 Nm | 0 à 100 km/h : 6,4 s"
+                },
+                "Superb / Superb Combi": {
+                    "2.0 TDI 150 / 193 ch DSG7": "Description : Grande berline ou break routier au confort princier.\nType de moteur : 4 cylindres turbo diesel 2.0 L\nPuissance : 150 ou 193 ch (4x4) | Couple : 360 / 400 Nm | Coffre : 645 L (690 L Combi)",
+                    "1.5 TSI iV Hybride rechargeable 204 ch": "Description : Grand break hybride rechargeable.\nType de moteur : 4 cylindres 1.5 TSI + moteur électrique\nPuissance cumulée : 204 ch | Autonomie électrique WLTP : > 120 km"
+                },
+                "Kamiq": {
+                    "1.0 TSI 116 ch DSG7": "Description : SUV urbain compact.\nType de moteur : 3 cylindres turbo essence 1.0 L\nPuissance : 116 ch | Couple : 200 Nm | Coffre : 400 L"
+                },
+                "Karoq": {
+                    "1.5 TSI 150 ch DSG7": "Description : SUV compact modulable (sièges VarioFlex en option).\nType de moteur : 4 cylindres turbo essence 1.5 L\nPuissance : 150 ch | Couple : 250 Nm | Coffre : 521 L"
+                },
+                "Kodiaq": {
+                    "1.5 m-HEV 150 ch DSG7": "Description : Grand SUV familial (5 ou 7 places).\nType de moteur : 4 cylindres turbo essence 1.5 L + 48V\nPuissance : 150 ch | Couple : 250 Nm | Coffre : jusqu'à 910 L (5 places)",
+                    "2.0 TDI 193 ch DSG7 4x4": "Description : Grand SUV routier 4 roues motrices.\nType de moteur : 4 cylindres turbo diesel 2.0 L\nPuissance : 193 ch | Couple : 400 Nm"
+                },
+                "Elroq / Enyaq": {
+                    "85 Électrique 286 ch (77 kWh nets)": "Description : SUV compact (Elroq) ou familial (Enyaq) 100 % électrique.\nType de moteur : Électrique arrière\nPuissance : 286 ch | Couple : 545 Nm | Autonomie WLTP : jusqu'à 576 km"
+                }
+            },
+            "Tesla": {
+                "Model 3": {
+                    "Propulsion (283 ch)": "Description : Berline 100 % électrique.\nType de moteur : 1 moteur électrique arrière (batterie LFP ~60 kWh)\nPuissance : ~283 ch | Couple : ~420 Nm | Autonomie WLTP : 513 km | Coffre : 594 L + 88 L avant",
+                    "Grande Autonomie Propulsion (320 ch)": "Description : Berline électrique à autonomie record.\nType de moteur : 1 moteur électrique arrière (grande batterie)\nPuissance : ~320 ch | Autonomie WLTP : 702 km",
+                    "Grande Autonomie AWD (~498 ch)": "Description : Berline électrique 4 roues motrices.\nType de moteur : 2 moteurs électriques (Dual Motor AWD)\nPuissance : ~498 ch | Couple : ~493 Nm | Autonomie WLTP : 629 km",
+                    "Performance (460+ ch)": "Description : Berline électrique sportive.\nType de moteur : 2 moteurs électriques Performance\nPuissance : 460+ ch | Couple : ~740 Nm | 0 à 100 km/h : 3,1 s"
+                },
+                "Model Y": {
+                    "Propulsion (~299 ch)": "Description : SUV familial 100 % électrique.\nType de moteur : 1 moteur électrique arrière\nPuissance : ~299 ch | Couple : ~420 Nm | Autonomie WLTP : 455 km | Coffre : jusqu'à 2 158 L",
+                    "Grande Autonomie Propulsion (~340 ch)": "Description : SUV familial électrique longue distance.\nType de moteur : 1 moteur électrique arrière (grande batterie)\nAutonomie WLTP : 600 km | Recharge Superchargeur : 250 kW",
+                    "Grande Autonomie AWD (~514 ch)": "Description : SUV familial électrique 4 roues motrices (5 ou 7 places).\nType de moteur : 2 moteurs électriques (Dual Motor AWD)\nPuissance : ~514 ch | Couple : ~493 Nm | Autonomie WLTP : 533 km"
+                },
+                "Model S": {
+                    "Dual Motor AWD (670 ch)": "Description : Grande berline routière 100 % électrique.\nType de moteur : 2 moteurs électriques\nPuissance : 670 ch | Autonomie WLTP : 634 km | 0 à 100 km/h : 3,2 s | Coffre : 793 L",
+                    "Plaid Tri-Motor AWD (1 020 ch)": "Description : Grande berline aux accélérations fulgurantes.\nType de moteur : 3 moteurs électriques à rotor gainé carbone\nPuissance : 1 020 ch | 0 à 100 km/h : 2,1 s | Vitesse max : 322 km/h"
+                },
+                "Model X": {
+                    "Dual Motor AWD (670 ch)": "Description : Grand SUV à portes Falcon (5, 6 ou 7 places).\nType de moteur : 2 moteurs électriques\nPuissance : 670 ch | Autonomie WLTP : 576 km | 0 à 100 km/h : 3,9 s",
+                    "Plaid Tri-Motor AWD (1 020 ch)": "Description : Grand SUV très haute performance.\nType de moteur : 3 moteurs électriques\nPuissance : 1 020 ch | 0 à 100 km/h : 2,6 s"
+                }
+            },
+            "Toyota": {
+                "Aygo X": {
+                    "1.0 VVT-i 72 ch": "Description : Mini-crossover urbain agile.\nType de moteur : 3 cylindres atmosphérique 1.0 L\nPuissance : 72 ch | Couple : 93 Nm | Boîte : Manuelle 5 ou S-CVT | Coffre : 231 L"
+                },
+                "Yaris": {
+                    "Hybride 116 ch": "Description : Citadine hybride auto-rechargeable.\nType de moteur : 3 cylindres essence 1.5 L + moteurs électriques\nPuissance cumulée : 116 ch | Couple électrique : 141 Nm | Conso : 3,8 L/100 km | Coffre : 286 L",
+                    "Hybride 130 ch": "Description : Citadine hybride plus dynamique.\nType de moteur : 3 cylindres essence 1.5 L + moteur électrique renforcé\nPuissance cumulée : 130 ch | Couple électrique : 185 Nm",
+                    "GR Yaris 1.6 Turbo 280 ch AWD": "Description : Citadine sportive homologuée rallye 4 roues motrices.\nType de moteur : 3 cylindres turbo essence 1.6 L\nPuissance : 280 ch | Couple : 390 Nm | Transmission : GR-FOUR AWD"
+                },
+                "Yaris Cross": {
+                    "Hybride 116 ch (2WD ou AWD-i)": "Description : Petit SUV hybride urbain.\nType de moteur : 3 cylindres essence 1.5 L + moteurs électriques\nPuissance : 116 ch | Conso mixte : 4,4 à 5,1 L/100 km | Coffre : 397 L",
+                    "Hybride 130 ch": "Description : Petit SUV hybride plus réactif.\nType de moteur : 3 cylindres essence 1.5 L + moteur électrique renforcé\nPuissance : 130 ch | Couple électrique : 185 Nm"
+                },
+                "Corolla / Corolla Touring Sports": {
+                    "Hybride 140 ch": "Description : Berline compacte ou break Touring Sports.\nType de moteur : 4 cylindres essence 1.8 L + moteur électrique\nPuissance cumulée : 140 ch | Couple électrique : 163 Nm | Coffre : 361 L (598 L break)",
+                    "Hybride 196 ch": "Description : Compacte ou break hybride performant.\nType de moteur : 4 cylindres essence 2.0 L + moteur électrique\nPuissance cumulée : 196 ch | Couple électrique : 206 Nm | 0 à 100 km/h : 7,4 s"
+                },
+                "C-HR": {
+                    "Hybride 140 ch": "Description : SUV coupé au design acéré.\nType de moteur : 4 cylindres essence 1.8 L + moteur électrique\nPuissance cumulée : 140 ch | Boîte : e-CVT | Coffre : 388 L",
+                    "Hybride 200 ch (2WD ou AWD-i)": "Description : SUV coupé hybride puissant.\nType de moteur : 4 cylindres essence 2.0 L + moteurs électriques\nPuissance cumulée : 197 ch | Disponible en transmission intégrale AWD-i",
+                    "Hybride rechargeable 223 ch": "Description : SUV coupé Plug-in Hybrid.\nType de moteur : 4 cylindres 2.0 L + moteur électrique (batterie 13,6 kWh)\nPuissance cumulée : 223 ch | Autonomie électrique : ~66 km WLTP"
+                },
+                "Prius": {
+                    "Hybride rechargeable 223 ch": "Description : Berline profilée hybride rechargeable.\nType de moteur : 4 cylindres 2.0 L + moteur électrique\nPuissance cumulée : 223 ch | Autonomie électrique : jusqu'à 86 km WLTP"
+                },
+                "RAV4": {
+                    "Hybride 218 ch (2WD) / 222 ch (AWD-i)": "Description : SUV familial hybride.\nType de moteur : 4 cylindres essence 2.5 L + 1 ou 2 moteurs électriques\nPuissance : 218 ch (traction) ou 222 ch (4x4 AWD-i) | Coffre : 580 L",
+                    "Hybride rechargeable 306 ch AWD-i": "Description : SUV familial Plug-in Hybrid puissant.\nType de moteur : 4 cylindres 2.5 L + 2 moteurs électriques (batterie 18,1 kWh)\nPuissance cumulée : 306 ch | Autonomie électrique : ~75 km WLTP | 0 à 100 km/h : 6,0 s"
+                },
+                "bZ4X": {
+                    "Électrique 204 ch (2WD) / 218 ch (AWD)": "Description : SUV familial 100 % électrique.\nType de moteur : 1 ou 2 moteurs électriques (batterie 71,4 kWh)\nPuissance : 204 ou 218 ch | Autonomie WLTP : jusqu'à 513 km | Coffre : 452 L"
+                },
+                "Land Cruiser": {
+                    "2.8 D-4D 204 ch 4x4": "Description : Tout-terrain de franchissement légendaire à châssis échelle.\nType de moteur : 4 cylindres turbo diesel 2.8 L\nPuissance : 204 ch | Couple : 500 Nm | Boîte : Automatique 8 rapports"
+                }
+            },
+            "Volkswagen": {
+                "Polo": {
+                    "Essence 1.0 TSI 95 ch": "Description : Citadine polyvalente.\nType de moteur : 3 cylindres turbo essence 1.0 L\nPuissance : 95 ch | Couple : 175 Nm | Boîte : Manuelle 5 ou DSG7 | Coffre : 351 L",
+                    "Essence 1.0 TSI 115 ch DSG7": "Description : Citadine polyvalente à boîte automatique.\nType de moteur : 3 cylindres turbo essence 1.0 L\nPuissance : 115 ch | Couple : 200 Nm | Boîte : Automatique DSG7"
+                },
+                "T-Cross / Taigo": {
+                    "1.0 TSI 115 ch DSG7": "Description : Petit SUV urbain modulable (T-Cross) ou SUV coupé (Taigo).\nType de moteur : 3 cylindres turbo essence 1.0 L\nPuissance : 115 ch | Couple : 200 Nm | Coffre : 385 à 455 L (T-Cross)",
+                    "1.5 TSI 150 ch DSG7": "Description : SUV urbain dynamique.\nType de moteur : 4 cylindres turbo essence 1.5 L\nPuissance : 150 ch | Couple : 250 Nm | Boîte : DSG7"
+                },
+                "T-Roc": {
+                    "1.5 TSI 150 ch DSG7": "Description : SUV compact polyvalent.\nType de moteur : 4 cylindres turbo essence 1.5 L\nPuissance : 150 ch | Couple : 250 Nm | Coffre : 445 L",
+                    "T-Roc R 2.0 TSI 300 ch 4Motion": "Description : SUV compact sportif 4 roues motrices.\nType de moteur : 4 cylindres turbo essence 2.0 L\nPuissance : 300 ch | Couple : 400 Nm | 0 à 100 km/h : 4,9 s"
+                },
+                "Golf 8 / Golf SW": {
+                    "Essence 1.5 TSI 150 ch": "Description : Berline compacte ou break SW.\nType de moteur : 4 cylindres turbo essence ACT\nPuissance : 150 ch | Couple : 250 Nm | Coffre : 381 L (611 L SW)",
+                    "Diesel 2.0 TDI 150 ch DSG7": "Description : Berline compacte routière longue distance.\nType de moteur : 4 cylindres turbo diesel 2.0 L\nPuissance : 150 ch | Couple : 360 Nm | Boîte : Automatique DSG7",
+                    "GTI 2.0 TSI 265 ch": "Description : Berline compacte sportive.\nType de moteur : 4 cylindres turbo essence 2.0 L\nPuissance : 265 ch | Couple : 370 Nm | 0 à 100 km/h : 5,9 s",
+                    "Golf R 333 ch 4Motion": "Description : Compacte ou break ultra-sportif 4 roues motrices.\nType de moteur : 4 cylindres turbo essence 2.0 L\nPuissance : 333 ch | Couple : 420 Nm | 0 à 100 km/h : 4,6 s"
+                },
+                "Passat Variant": {
+                    "1.5 eTSI 150 ch DSG7": "Description : Grand break familial spacieux.\nType de moteur : 4 cylindres turbo essence 1.5 L + 48V\nPuissance : 150 ch | Couple : 250 Nm | Coffre : 690 L",
+                    "eHybrid 272 ch DSG6": "Description : Grand break hybride rechargeable longue autonomie.\nType de moteur : 4 cylindres 1.5 TSI + moteur électrique (19,7 kWh)\nPuissance cumulée : 272 ch | Autonomie électrique WLTP : > 120 km"
+                },
+                "Tiguan / Tayron": {
+                    "Mild Hybrid 1.5 eTSI 150 ch": "Description : SUV familial (5 places Tiguan / 5-7 places Tayron).\nType de moteur : 4 cylindres turbo essence + 48V\nPuissance : 150 ch | Couple : 250 Nm | Coffre : 652 L (Tiguan)",
+                    "Diesel 2.0 TDI 193 ch 4Motion": "Description : SUV familial 4 roues motrices.\nType de moteur : 4 cylindres turbo diesel 2.0 L\nPuissance : 193 ch | Couple : 400 Nm | Transmission : Intégrale 4Motion",
+                    "eHybrid 272 ch": "Description : SUV familial hybride rechargeable.\nType de moteur : 4 cylindres 1.5 TSI + moteur électrique\nPuissance cumulée : 272 ch | Autonomie électrique WLTP : ~100 km"
+                },
+                "ID.3 / ID.4 / ID.5": {
+                    "Pro 204 / 286 ch (77 kWh)": "Description : Compacte (ID.3), SUV (ID.4) ou SUV coupé (ID.5) 100 % électrique.\nType de moteur : Électrique arrière\nPuissance : 204 ou 286 ch | Couple : 545 Nm (286 ch) | Autonomie WLTP : jusqu'à 556 km",
+                    "GTX 340 ch AWD (79 kWh)": "Description : Version électrique sportive 4 roues motrices.\nType de moteur : 2 moteurs électriques\nPuissance : 340 ch | 0 à 100 km/h : 5,4 s"
+                },
+                "ID.7 / ID.7 Tourer": {
+                    "Pro S 286 ch (86 kWh)": "Description : Grande berline ou break routier 100 % électrique.\nType de moteur : Électrique arrière\nPuissance : 286 ch | Couple : 545 Nm | Autonomie WLTP : jusqu'à 709 km | Coffre : 532 L (605 L Tourer)"
+                },
+                "ID. Buzz": {
+                    "Pro 286 ch (79 / 86 kWh)": "Description : Van électrique néo-rétro (5, 6 ou 7 places).\nType de moteur : Électrique arrière\nPuissance : 286 ch | Couple : 560 Nm | Autonomie WLTP : jusqu'à 487 km | Coffre : 1 121 L"
+                }
+            },
+            "Volvo": {
+                "EX30": {
+                    "Single Motor Extended Range 272 ch": "Description : Petit SUV 100 % électrique vif et compact.\nType de moteur : Électrique arrière (batterie 69 kWh)\nPuissance : 272 ch | Couple : 343 Nm | Autonomie WLTP : jusqu'à 476 km | Coffre : 318 L",
+                    "Twin Motor Performance 428 ch AWD": "Description : Petit SUV électrique aux accélérations sportives.\nType de moteur : 2 moteurs électriques\nPuissance : 428 ch | Couple : 543 Nm | 0 à 100 km/h : 3,6 s"
+                },
+                "XC40 / EX40 / EC40": {
+                    "XC40 B3 Mild Hybrid 163 ch": "Description : SUV compact scandinave thermique.\nType de moteur : 4 cylindres turbo essence 2.0 L + 48V\nPuissance : 163 ch | Couple : 265 Nm | Boîte : Automatique 7 rapports | Coffre : 452 L",
+                    "EX40 Single Motor Extended Range 252 ch": "Description : SUV compact 100 % électrique.\nType de moteur : Électrique arrière (batterie 82 kWh)\nPuissance : 252 ch | Couple : 420 Nm | Autonomie WLTP : jusqu'à 576 km"
+                },
+                "V60 / V90": {
+                    "V60 T6 Recharge AWD 350 ch": "Description : Break familial hybride rechargeable.\nType de moteur : 4 cylindres 2.0 turbo + moteur électrique\nPuissance cumulée : 350 ch | Autonomie électrique WLTP : jusqu'à 93 km | Coffre : 519 L"
+                },
+                "XC60": {
+                    "B5 Mild Hybrid AWD 250 ch": "Description : SUV familial premium scandinave.\nType de moteur : 4 cylindres turbo essence 2.0 L + hybridation 48V\nPuissance : 250 ch | Couple : 350 Nm | Transmission : AWD | Coffre : 483 L",
+                    "T8 Recharge AWD 455 ch": "Description : SUV familial hybride rechargeable haute puissance.\nType de moteur : 4 cylindres 2.0 turbo + moteur électrique arrière\nPuissance cumulée : 455 ch | Couple cumulé : 709 Nm | 0 à 100 km/h : 4,9 s"
+                },
+                "XC90 / EX90": {
+                    "XC90 T8 Recharge AWD 455 ch (7 places)": "Description : Grand SUV familial 7 places hybride rechargeable.\nType de moteur : 4 cylindres 2.0 turbo + moteur électrique\nPuissance cumulée : 455 ch | Couple cumulé : 709 Nm | Coffre : 640 L (5 places)",
+                    "EX90 Twin Motor Performance 517 ch (7 places)": "Description : Grand SUV 7 places 100 % électrique ultra-sécuritaire.\nType de moteur : 2 moteurs électriques (batterie 111 kWh)\nPuissance : 517 ch | Couple : 910 Nm | Autonomie WLTP : jusqu'à 614 km"
+                }
+            }
+        };
+
+        const marqueSelect = document.getElementById("marque");
+        const modeleSelect = document.getElementById("modele");
+        const moteurSelect = document.getElementById("moteur");
+        const resDescription = document.getElementById("res-description");
+        const form = document.getElementById("formulaire-selection");
+
+        function initialiserMarques() {
+            Object.keys(catalogueVehicules).sort((a, b) => a.localeCompare(b, "fr")).forEach((marque) => {
+                const option = document.createElement("option");
+                option.value = marque;
+                option.textContent = marque;
+                marqueSelect.appendChild(option);
+            });
+        }
+
+        function remplirModeles(marque) {
+            modeleSelect.innerHTML = '<option value="">-- Choisir un modèle --</option>';
+            moteurSelect.innerHTML = '<option value="">-- Choisir un moteur --</option>';
+            moteurSelect.disabled = true;
+
+            if (catalogueVehicules[marque]) {
+                Object.keys(catalogueVehicules[marque]).forEach((modele) => {
+                    const option = document.createElement("option");
+                    option.value = modele;
+                    option.textContent = modele;
+                    modeleSelect.appendChild(option);
+                });
+                modeleSelect.disabled = false;
+            } else {
+                modeleSelect.disabled = true;
+            }
+        }
+
+        function remplirMoteurs(marque, modele) {
+            moteurSelect.innerHTML = '<option value="">-- Choisir un moteur --</option>';
+
+            if (catalogueVehicules[marque] && catalogueVehicules[marque][modele]) {
+                Object.keys(catalogueVehicules[marque][modele]).forEach((moteur) => {
+                    const option = document.createElement("option");
+                    option.value = moteur;
+                    option.textContent = moteur;
+                    moteurSelect.appendChild(option);
+                });
+                moteurSelect.disabled = false;
+            } else {
+                moteurSelect.disabled = true;
+            }
+        }
+
+        marqueSelect.addEventListener("change", () => {
+            remplirModeles(marqueSelect.value);
+            resDescription.textContent = "—";
+        });
+
+        modeleSelect.addEventListener("change", () => {
+            remplirMoteurs(marqueSelect.value, modeleSelect.value);
+            resDescription.textContent = "—";
+        });
+
+        moteurSelect.addEventListener("change", () => {
+            const marqueChoisie = marqueSelect.value;
+            const modeleChoisi = modeleSelect.value;
+            const moteurChoisi = moteurSelect.value;
+
+            const specs =
+                catalogueVehicules[marqueChoisie] &&
+                catalogueVehicules[marqueChoisie][modeleChoisi] &&
+                catalogueVehicules[marqueChoisie][modeleChoisi][moteurChoisi];
+
+            resDescription.textContent = specs || "—";
+        });
+
+        form.addEventListener("reset", () => {
+            setTimeout(() => {
+                remplirModeles("");
+                resDescription.textContent = "—";
+            }, 0);
+        });
+
+        initialiserMarques();
+    </script>
+</body>
+</html>
