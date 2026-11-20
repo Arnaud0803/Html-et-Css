@@ -58,6 +58,19 @@ margin: 25px auto 15px;
 max-width: 800px;
 text-align: center;
 }
+.formulaire {
+font-family: 'Playfair Display', serif;
+font-size: 26px;
+color: #f9ff41;
+margin: 25px auto 15px;
+max-width: 800px;
+text-align: center;
+}
+
+#nom:focus{
+color: #f9ff41;
+}
+
 
 ul, ol {
 max-width: 800px;
@@ -126,6 +139,16 @@ width: 400px;
 }
 
 .boutton2 {
+font-size: 26px;
+color: #2fcf7f;
+margin-left: auto;
+max-width: 400px;
+text-align: center;
+display: block;
+width: 800px;
+
+}
+.boutton2:hover {
 font-size: 26px;
 color: #561494;
 margin-left: auto;
