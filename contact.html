@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Document</title>
+    <a href="index.html" class="boutton">Accueil</a>
+</head>
+<body>
+    <fieldset>
+        <legend class="formulaire">Formulaire de contact</legend>
+        <form>
+            <input type="radio" name="civilite" value="M" id="M">
+            <label for="M">Monsieur</label>
+            <input type="radio" name="civilite" value="Mme" id="Mme" required>
+            <label for="Mme">Madame</label><br><br>
+            
+            <div> 
+                <label for="nom">Nom :</label>
+                <input type="text" id="nom" name="nom" placeholder="Votre nom" required><br><br>
+            </div>
+    
+            <div>
+               <label for="prenom">Prénom :</label>
+                <input type="text" id="prenom" name="prenom" placeholder="Votre prénom" required><br><br>
+            </div>
+            
+            <div>
+                <label for="email">Email :</label>
+                <input type="email" id="email" name="email" placeholder="Votre email" required><br><br>
+            </div>
+
+            <div>
+                <label for="date">Date de naissance :</label>
+                <input type="date" id="date" name="date" required><br><br>
+            </div>
+        
+              <div>
+                <label for="favolite">Votre couleur préférée :</label>
+                <input type="color" id="favolite" name="favolite"><br><br>
+            </div>
+
+            <div>
+                <label for="motdepasse">Mot de passe :</label><br>
+                <input type="password" id="motdepasse" name="motdepasse" placeholder="Votre mot de passe" required ><br><br>
+            </div>
+
+            <input type="submit" value="Envoyer">
+        </form>
+
+</body>
+</html>

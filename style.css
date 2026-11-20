@@ -50,6 +50,14 @@ margin: 25px auto 15px;
 max-width: 800px;
 text-align: center;
 }
+.formulaire {
+font-family: 'Playfair Display', serif;
+font-size: 26px;
+color: #ff80bd;
+margin: 25px auto 15px;
+max-width: 800px;
+text-align: center;
+}
 
 ul, ol {
 max-width: 800px;
@@ -104,4 +112,26 @@ ul, ol {
 padding: 20px 35px;
 text-align: center;
 }
+}
+
+.boutton {
+font-size: 26px;
+color: #ff80bd;
+margin: 25px auto;
+max-width: 800px;
+text-align: center;
+display: block;
+width: 400px;
+
+}
+
+.boutton2 {
+font-size: 26px;
+color: #561494;
+margin-left: auto;
+max-width: 400px;
+text-align: center;
+display: block;
+width: 800px;
+
 }
